@@ -1,9 +1,13 @@
 {
   "name": "myapp",
-  "main": "expo-router/entry",
+  "main": "App.js",
   "version": "1.0.0",
   "dependencies": {
     "@expo/ui": "~57.0.21",
+    "@react-native-async-storage/async-storage": "^3.1.1",
+    "@react-navigation/native": "^7.5.0",
+    "@react-navigation/native-stack": "^7.20.0",
+    "axios": "^1.20.0",
     "expo": "~57.0.26",
     "expo-constants": "~57.0.20",
     "expo-device": "~57.0.2",
@@ -11,7 +15,6 @@
     "expo-glass-effect": "~57.0.4",
     "expo-image": "~57.0.5",
     "expo-linking": "~57.0.11",
-    "expo-router": "~57.0.24",
     "expo-splash-screen": "~57.0.9",
     "expo-status-bar": "~57.0.1",
     "expo-symbols": "~57.0.3",
