@@ -3,144 +3,143 @@ import {
   View,
   Text,
   TextInput,
-  FlatList,
+  ScrollView,
   TouchableOpacity,
   Image,
+  ActivityIndicator,
   StyleSheet,
 } from 'react-native';
 import { productService } from '../services/productService';
-import { COLORS } from '../constants/colors';
+import { getImageUrl } from '../constants/api';
 
 export default function SearchScreen({ navigation }) {
-  const [searchText, setSearchText] = useState('');
+  const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
+  const [searched, setSearched] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleSearch = async (text) => {
-    setSearchText(text);
-
-    if (text.length < 1) {
+    setQuery(text);
+    if (!text.trim()) {
       setResults([]);
+      setSearched(false);
       return;
     }
-
-    const data = await productService.searchProducts(text);
-    setResults(data);
+    try {
+      setLoading(true);
+      setSearched(true);
+      const data = await productService.searchProducts(text.trim());
+      setResults(data);
+    } catch (e) {
+      setResults([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <View style={styles.container}>
-      {/* Search Bar */}
-      <View style={styles.searchContainer}>
+      <View style={styles.searchBox}>
         <TextInput
-          placeholder="Search products..."
-          placeholderTextColor={COLORS.textSecondary}
-          value={searchText}
-          onChangeText={handleSearch}
-          style={styles.searchInput}
+          style={styles.input}
           autoFocus
+          placeholder="Search product, brand, category, or phone model..."
+          value={query}
+          onChangeText={handleSearch}
         />
+        {query.length > 0 && (
+          <TouchableOpacity onPress={() => handleSearch('')} style={styles.clearBtn}>
+            <Text style={{ fontWeight: 'bold', color: '#6B7280' }}>✕</Text>
+          </TouchableOpacity>
+        )}
       </View>
 
-      {/* Results */}
-      {searchText.length === 0 ? (
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>🔍 Search for products</Text>
-          <Text style={styles.emptySubtext}>Try: "case", "charger", "cable"</Text>
+      {loading ? (
+        <View style={styles.center}>
+          <ActivityIndicator size="large" color="#2563EB" />
+        </View>
+      ) : !searched ? (
+        <View style={styles.center}>
+          <Text style={{ fontSize: 40 }}>🔎</Text>
+          <Text style={styles.hint}>
+            Type a product name, category, or phone model (e.g. iPhone 15)
+          </Text>
         </View>
       ) : results.length === 0 ? (
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>❌ No results found</Text>
-          <Text style={styles.emptySubtext}>Try a different search</Text>
+        <View style={styles.center}>
+          <Text style={{ fontSize: 40 }}>😕</Text>
+          <Text style={styles.hint}>No matching accessories found for "{query}"</Text>
         </View>
       ) : (
-        <FlatList
-          data={results}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={styles.resultItem}
-              onPress={() => navigation.navigate('ProductDetail', { productId: item.id })}
-            >
-              <Image source={{ uri: item.image1 }} style={styles.resultImage} />
-              <View style={styles.resultInfo}>
-                <Text style={styles.resultName}>{item.name}</Text>
-                <Text style={styles.resultPrice}>₹{item.price}</Text>
-              </View>
-              <Text style={styles.arrow}>›</Text>
-            </TouchableOpacity>
-          )}
-          showsVerticalScrollIndicator={false}
-        />
+        <ScrollView contentContainerStyle={{ padding: 14 }}>
+          <Text style={styles.countText}>Found {results.length} result(s)</Text>
+          {results.map((item) => {
+            const imgUri = getImageUrl(item.image1);
+            return (
+              <TouchableOpacity
+                key={item.id}
+                style={styles.resultRow}
+                onPress={() =>
+                  navigation.navigate('ProductDetail', { productId: item.id, product: item })
+                }
+              >
+                {imgUri ? (
+                  <Image source={{ uri: imgUri }} style={styles.thumb} />
+                ) : (
+                  <View style={[styles.thumb, styles.noThumb]}>
+                    <Text style={{ fontSize: 22 }}>📱</Text>
+                  </View>
+                )}
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.name}>{item.name}</Text>
+                  <Text style={styles.meta}>
+                    {item.category} {item.compatiblePhones ? `• 📱 ${item.compatiblePhones}` : ''}
+                  </Text>
+                  <Text style={styles.mrp}>MRP: ₹{item.mrp ?? item.price}</Text>
+                </View>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
       )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.background,
-  },
-  searchContainer: {
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    backgroundColor: COLORS.primary,
-  },
-  searchInput: {
-    backgroundColor: 'white',
-    paddingHorizontal: 15,
-    paddingVertical: 12,
-    borderRadius: 8,
-    fontSize: 16,
-    color: COLORS.textPrimary,
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  emptyText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: COLORS.textSecondary,
-    marginBottom: 6,
-  },
-  emptySubtext: {
-    fontSize: 14,
-    color: COLORS.textSecondary,
-  },
-  resultItem: {
+  container: { flex: 1, backgroundColor: '#F3F4F6' },
+  searchBox: {
     flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
     padding: 12,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
-    backgroundColor: 'white',
+    borderColor: '#E5E7EB',
+  },
+  input: {
+    flex: 1,
+    backgroundColor: '#F3F4F6',
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 10,
+    fontSize: 14,
+  },
+  clearBtn: { paddingHorizontal: 12 },
+  center: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24 },
+  hint: { color: '#6B7280', fontSize: 14, marginTop: 10, textAlign: 'center' },
+  countText: { fontSize: 13, fontWeight: '600', color: '#4B5563', marginBottom: 10 },
+  resultRow: {
+    flexDirection: 'row',
+    backgroundColor: '#FFFFFF',
+    padding: 12,
+    borderRadius: 10,
+    marginBottom: 10,
+    gap: 12,
     alignItems: 'center',
   },
-  resultImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 8,
-    backgroundColor: COLORS.lightGray,
-  },
-  resultInfo: {
-    marginLeft: 12,
-    flex: 1,
-    justifyContent: 'center',
-  },
-  resultName: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: COLORS.textPrimary,
-  },
-  resultPrice: {
-    fontSize: 13,
-    color: COLORS.primary,
-    fontWeight: 'bold',
-    marginTop: 4,
-  },
-  arrow: {
-    fontSize: 24,
-    color: COLORS.textSecondary,
-  },
+  thumb: { width: 64, height: 64, borderRadius: 8, backgroundColor: '#F9FAFB' },
+  noThumb: { justifyContent: 'center', alignItems: 'center' },
+  name: { fontSize: 15, fontWeight: 'bold', color: '#111827' },
+  meta: { fontSize: 12, color: '#6B7280', marginTop: 2 },
+  mrp: { fontSize: 15, fontWeight: 'bold', color: '#111827', marginTop: 4 },
 });
