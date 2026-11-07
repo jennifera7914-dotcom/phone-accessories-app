@@ -15,6 +15,9 @@ public class Notification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "customer_id", length = 100)
+    private String customerId;
+
     private String title;
 
     @Column(length = 1000)
@@ -28,39 +31,15 @@ public class Notification {
     public Notification() {
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getBody() {
-        return body;
-    }
-
-    public void setBody(String body) {
-        this.body = body;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    public boolean isRead() {
-        return read;
-    }
-
-    public void setRead(boolean read) {
-        this.read = read;
-    }
+    public Long getId() { return id; }
+    public String getCustomerId() { return customerId; }
+    public void setCustomerId(String customerId) { this.customerId = customerId; }
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
+    public String getBody() { return body; }
+    public void setBody(String body) { this.body = body; }
+    public String getDate() { return date; }
+    public void setDate(String date) { this.date = date; }
+    public boolean isRead() { return read; }
+    public void setRead(boolean read) { this.read = read; }
 }

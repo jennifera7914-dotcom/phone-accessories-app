@@ -101,8 +101,9 @@ public class AdminController {
         historyRepository.save(h);
     }
 
-    private void notify(String title, String body) {
+    private void notify(String customerId, String title, String body) {
         Notification n = new Notification();
+        n.setCustomerId(customerId);
         n.setTitle(title);
         n.setBody(body);
         n.setDate(LocalDate.now().toString());
@@ -163,7 +164,7 @@ public class AdminController {
             note = "delivered".equals(next) ? "Delivered by the shop" : "Cancelled by the shop";
         }
         recordHistory(saved, next, note, "admin");
-        notify("Order update", "Order " + saved.getOrderCode() + " is now " + next + ".");
+        notify(saved.getCustomerId(), "Order update", "Order " + saved.getOrderCode() + " is now " + next + ".");
 
         return ResponseEntity.ok(orderView(saved, customerIndex()));
     }
@@ -181,7 +182,7 @@ public class AdminController {
         if (body.containsKey("estimatedDelivery")) order.setEstimatedDelivery(clean(body.get("estimatedDelivery")));
         CustomerOrder saved = orderRepository.save(order);
         recordHistory(saved, saved.getStatus(), "Expected delivery date set", "admin");
-        notify("Delivery date", "Order " + saved.getOrderCode() + " is expected by " + saved.getEstimatedDelivery() + ".");
+        notify(saved.getCustomerId(), "Delivery date", "Order " + saved.getOrderCode() + " is expected by " + saved.getEstimatedDelivery() + ".");
         return ResponseEntity.ok(orderView(saved, customerIndex()));
     }
 

@@ -71,8 +71,9 @@ public class OrderController {
         historyRepository.save(h);
     }
 
-    private void notify(String title, String body) {
+    private void notify(String customerId, String title, String body) {
         Notification n = new Notification();
+        n.setCustomerId(customerId);
         n.setTitle(title);
         n.setBody(body);
         n.setDate(LocalDate.now().toString());
@@ -248,7 +249,7 @@ public class OrderController {
         saved = orderRepository.save(saved);
 
         recordHistory(saved, "placed", "Order placed", "customer");
-        notify("Order placed", "Order " + code + " placed. Total: Rs." + saved.getTotal() + ".");
+        notify(customer.getCustomerCode(), "Order placed", "Order " + code + " placed. Total: Rs." + saved.getTotal() + ".");
 
         return ResponseEntity.ok(saved);
     }
@@ -307,7 +308,7 @@ public class OrderController {
         order.setStatus("cancelled");
         CustomerOrder saved = orderRepository.save(order);
         recordHistory(saved, "cancelled", "Cancelled by customer", "customer");
-        notify("Order cancelled", "Order " + saved.getOrderCode() + " has been cancelled.");
+        notify(saved.getCustomerId(), "Order cancelled", "Order " + saved.getOrderCode() + " has been cancelled.");
         return ResponseEntity.ok(saved);
     }
 }

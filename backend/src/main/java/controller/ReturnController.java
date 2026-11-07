@@ -51,8 +51,9 @@ public class ReturnController {
         return adminToken != null && !adminToken.isBlank() && adminToken.equals(token);
     }
 
-    private void notify(String title, String body) {
+    private void notify(String customerId, String title, String body) {
         Notification n = new Notification();
+        n.setCustomerId(customerId);
         n.setTitle(title);
         n.setBody(body);
         n.setDate(LocalDate.now().toString());
@@ -128,7 +129,7 @@ public class ReturnController {
 
         ReturnRequest saved = returnRepository.save(r);
 
-        notify("Return request received",
+        notify(customer.getCustomerCode(), "Return request received",
                 "Your " + actionType + " request for order " + saved.getOrderCode()
                         + " was submitted and is waiting for shop review.");
 
@@ -209,7 +210,7 @@ public class ReturnController {
         ReturnRequest saved = returnRepository.save(r);
 
         String label = "return".equals(r.getActionType()) ? "Return" : "Exchange";
-        notify(label + ("approved".equals(decision) ? " approved" : " rejected"),
+        notify(saved.getCustomerId(), label + ("approved".equals(decision) ? " approved" : " rejected"),
                 "Your " + label.toLowerCase() + " request for order " + saved.getOrderCode()
                         + " was " + decision + " by the shop."
                         + (note.isEmpty() ? "" : " Note: " + note));

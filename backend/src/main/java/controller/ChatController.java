@@ -42,8 +42,9 @@ public class ChatController {
         return adminToken != null && !adminToken.isBlank() && adminToken.equals(token);
     }
 
-    private void notify(String title, String body) {
+    private void notify(String customerId, String title, String body) {
         Notification n = new Notification();
+        n.setCustomerId(customerId);
         n.setTitle(title);
         n.setBody(body);
         n.setDate(LocalDate.now().toString());
@@ -202,7 +203,7 @@ public class ChatController {
         reply.setReadByAdmin(true);
         ChatMessage saved = chatRepository.save(reply);
 
-        notify("New message from shop", text.length() > 80 ? text.substring(0, 80) + "..." : text);
+        notify(customerId, "New message from shop", text.length() > 80 ? text.substring(0, 80) + "..." : text);
 
         return ResponseEntity.ok(view(saved));
     }
