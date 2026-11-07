@@ -9,6 +9,7 @@ import ProductsScreen from '../screens/ProductsScreen';
 import ProductDetailScreen from '../screens/ProductDetailScreen';
 import AdminProducts from '../screens/AdminProducts';
 import AddProduct from '../screens/AddProduct';
+import CartScreen from '../screens/CartScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -28,6 +29,7 @@ export default function AppNavigator() {
         <Stack.Screen name="Search" component={SearchScreen} options={{ title: '🔍 Search' }} />
         <Stack.Screen name="Products" component={ProductsScreen} options={({ route }) => ({ title: route.params?.category || 'Products' })} />
         <Stack.Screen name="ProductDetail" component={ProductDetailScreen} options={{ title: '📄 Product' }} />
+        <Stack.Screen name="Cart" component={CartScreen} options={{ title: 'Shopping Cart' }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
