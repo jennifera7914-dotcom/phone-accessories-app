@@ -7,7 +7,6 @@ import {
   ScrollView,
   Image,
   Modal,
-  Switch,
   ActivityIndicator,
   StyleSheet,
   Platform,
@@ -18,7 +17,6 @@ import { productService } from '../services/productService';
 import { getImageUrl } from '../constants/api';
 
 const PRESET_PHONES = [
-  'Universal',
   'iPhone 15',
   'iPhone 14',
   'Samsung S24',
@@ -56,8 +54,6 @@ export default function AdminProducts() {
   const [image2, setImage2] = useState('');
   const [selectedPhones, setSelectedPhones] = useState(['Universal']);
   const [customPhone, setCustomPhone] = useState('');
-  const [isFeatured, setIsFeatured] = useState(false);
-  const [isNewArrival, setIsNewArrival] = useState(true);
   const [description, setDescription] = useState('');
 
   // Category Tab Form State
@@ -99,8 +95,6 @@ export default function AdminProducts() {
     setImage2('');
     setSelectedPhones(['Universal']);
     setCustomPhone('');
-    setIsFeatured(false);
-    setIsNewArrival(true);
     setDescription('');
   };
 
@@ -129,12 +123,10 @@ export default function AdminProducts() {
     setStockQty((item.stockQty ?? 0).toString());
     setImage1(item.image1 || '');
     setImage2(item.image2 || '');
-    const phones = item.compatiblePhones
+        const phones = item.compatiblePhones
       ? item.compatiblePhones.split(',').map((s) => s.trim()).filter(Boolean)
-      : ['Universal'];
-    setSelectedPhones(phones.length > 0 ? phones : ['Universal']);
-    setIsFeatured(Boolean(item.isFeatured));
-    setIsNewArrival(Boolean(item.isNewArrival));
+      : [];
+    setSelectedPhones(phones);
     setDescription(item.description || '');
   };
 
@@ -203,8 +195,6 @@ export default function AdminProducts() {
       image1: image1 || null,
       image2: image2 || null,
       compatiblePhones: selectedPhones.join(', '),
-      isFeatured,
-      isNewArrival,
       description: description.trim(),
     };
 
@@ -316,7 +306,7 @@ export default function AdminProducts() {
         <Text style={styles.label}>Product Name *</Text>
         <TextInput
           style={styles.input}
-          placeholder="e.g. MagSafe Clear Shockproof Case"
+          placeholder="Enter product name (e.g., MagSafe Clear Shockproof Case)"
           value={name}
           onChangeText={setName}
         />
@@ -339,7 +329,7 @@ export default function AdminProducts() {
             <Text style={styles.label}>MRP (₹) *</Text>
             <TextInput
               style={styles.input}
-              placeholder="e.g. 499"
+                            placeholder="Enter MRP (e.g., 499)"
               keyboardType="numeric"
               value={mrp}
               onChangeText={setMrp}
@@ -349,7 +339,7 @@ export default function AdminProducts() {
             <Text style={styles.label}>Brand</Text>
             <TextInput
               style={styles.input}
-              placeholder="e.g. Spigen / Anker"
+                            placeholder="Enter brand (e.g., Spigen / Anker)"
               value={brand}
               onChangeText={setBrand}
             />
@@ -361,7 +351,7 @@ export default function AdminProducts() {
         <View style={styles.stockRow}>
           <TextInput
             style={[styles.input, { flex: 1, marginBottom: 0 }]}
-            placeholder="0"
+            placeholder="Enter stock qty (e.g., 50)"
             keyboardType="numeric"
             value={stockQty}
             onChangeText={setStockQty}
@@ -389,7 +379,7 @@ export default function AdminProducts() {
               ) : (
                 <View style={{ alignItems: 'center' }}>
                   <Text style={{ fontSize: 26 }}>📷</Text>
-                  <Text style={styles.uploadHint}>Upload Main Photo</Text>
+                                  <Text style={styles.uploadHint}>Tap to Upload Main Photo</Text>
                 </View>
               )}
             </TouchableOpacity>
@@ -456,19 +446,7 @@ export default function AdminProducts() {
           </TouchableOpacity>
         </View>
 
-        {/* 7. FEATURED & NEW ARRIVAL TOGGLES (Idea C) */}
-        <View style={styles.switchCard}>
-          <View style={styles.switchRow}>
-            <Text style={styles.switchLabel}>🔥 Pin to "Featured" on Customer Home</Text>
-            <Switch value={isFeatured} onValueChange={setIsFeatured} />
-          </View>
-          <View style={[styles.switchRow, { marginTop: 10 }]}>
-            <Text style={styles.switchLabel}>✨ Mark as "New Arrival"</Text>
-            <Switch value={isNewArrival} onValueChange={setIsNewArrival} />
-          </View>
-        </View>
-
-        {/* 8. DESCRIPTION */}
+        {/* 7. DESCRIPTION */}
         <Text style={styles.label}>Product Description</Text>
         <TextInput
           style={[styles.input, { height: 80, textAlignVertical: 'top' }]}
@@ -610,9 +588,6 @@ export default function AdminProducts() {
                               {badge.label}
                             </Text>
                           </View>
-                          {item.isFeatured && (
-                            <Text style={styles.tagPill}>🔥 Featured</Text>
-                          )}
                         </View>
                       </View>
 
@@ -657,7 +632,7 @@ export default function AdminProducts() {
               <Text style={styles.label}>Category Name *</Text>
               <TextInput
                 style={styles.input}
-                placeholder="e.g. Fast Chargers, Cases, Tempered Glass"
+                             placeholder="Enter category name (e.g., Fast Chargers)"
                 value={newCatName}
                 onChangeText={setNewCatName}
               />

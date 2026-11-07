@@ -18,7 +18,6 @@ const PRIMARY = COLORS?.primary || '#2563EB';
 export default function HomeScreen({ navigation }) {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [selectedPhone, setSelectedPhone] = useState('All');
   const [sortBy, setSortBy] = useState('newest');
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -40,7 +39,6 @@ export default function HomeScreen({ navigation }) {
     }
   };
 
-  // Auto-reloads IMMEDIATELY whenever you come back from Admin screen!
   useEffect(() => {
     loadDashboard(true);
     const unsubscribe = navigation.addListener('focus', () => {
@@ -49,41 +47,10 @@ export default function HomeScreen({ navigation }) {
     return unsubscribe;
   }, [navigation, sortBy]);
 
-  // Build Phone Model filter chips dynamically from live products (Idea B)
-  const availablePhones = React.useMemo(() => {
-    const set = new Set(['All']);
-    products.forEach((p) => {
-      if (p.compatiblePhones) {
-        p.compatiblePhones
-          .split(',')
-          .map((s) => s.trim())
-          .filter(Boolean)
-          .forEach((model) => set.add(model));
-      }
-    });
-    return Array.from(set);
-  }, [products]);
-
-  // Filter displayed products by selected Phone Model
-  const filteredProducts = React.useMemo(() => {
-    if (selectedPhone === 'All') return products;
-    const target = selectedPhone.toLowerCase();
-    return products.filter(
-      (p) =>
-        p.compatiblePhones &&
-        (p.compatiblePhones.toLowerCase().includes(target) ||
-          p.compatiblePhones.toLowerCase().includes('universal'))
-    );
-  }, [products, selectedPhone]);
-
-  const featuredProducts = filteredProducts.filter((p) => p.isFeatured);
-  const newArrivalProducts = filteredProducts.filter((p) => p.isNewArrival);
-
-  // Automatic Stock Badge (Idea A)
+  // ✅ Simple 2-state stock badge
   const getStockBadge = (qty) => {
     const n = Number(qty ?? 0);
     if (n <= 0) return { label: 'Out of Stock', bg: '#FEE2E2', color: '#DC2626' };
-    if (n <= 5) return { label: `Only ${n} left!`, bg: '#FEF3C7', color: '#D97706' };
     return { label: 'In Stock', bg: '#DCFCE7', color: '#16A34A' };
   };
 
@@ -114,7 +81,6 @@ export default function HomeScreen({ navigation }) {
             </Text>
           </View>
         </View>
-
         <View style={styles.cardBody}>
           <Text style={styles.brandText} numberOfLines={1}>
             {item.brand || item.category}
@@ -122,18 +88,8 @@ export default function HomeScreen({ navigation }) {
           <Text style={styles.productTitle} numberOfLines={2}>
             {item.name}
           </Text>
-
-          {item.compatiblePhones ? (
-            <Text style={styles.compatText} numberOfLines={1}>
-              📱 {item.compatiblePhones}
-            </Text>
-          ) : null}
-
           <View style={styles.priceRow}>
             <Text style={styles.mrpText}>MRP: ₹{displayMrp}</Text>
-            {item.rating ? (
-              <Text style={styles.ratingText}>⭐ {Number(item.rating).toFixed(1)}</Text>
-            ) : null}
           </View>
         </View>
       </TouchableOpacity>
@@ -142,15 +98,16 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      {/* TOP BAR: SEARCH + ADMIN DASHBOARD BUTTON */}
+      {/* TOP BAR */}
       <View style={styles.topBar}>
         <TouchableOpacity
           style={styles.searchBarBtn}
           onPress={() => navigation.navigate('Search')}
         >
-          <Text style={styles.searchPlaceholder}>🔍 Search cases, chargers, phone models...</Text>
+          <Text style={styles.searchPlaceholder}>
+            🔍 Search cases, chargers, phone models...
+          </Text>
         </TouchableOpacity>
-
         <TouchableOpacity
           style={[styles.adminBtn, { backgroundColor: PRIMARY }]}
           onPress={() => navigation.navigate('AdminProducts')}
@@ -162,7 +119,9 @@ export default function HomeScreen({ navigation }) {
       {loading ? (
         <View style={styles.centerBox}>
           <ActivityIndicator size="large" color={PRIMARY} />
-          <Text style={{ marginTop: 10, color: '#6B7280' }}>Loading live store...</Text>
+          <Text style={{ marginTop: 10, color: '#6B7280' }}>
+            Loading live store...
+          </Text>
         </View>
       ) : (
         <ScrollView
@@ -177,14 +136,16 @@ export default function HomeScreen({ navigation }) {
             />
           }
         >
-          {/* 1. LIVE CATEGORIES FROM ADMIN */}
+          {/* 1. CATEGORIES */}
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>📂 Shop by Category</Text>
               <TouchableOpacity
                 onPress={() => navigation.navigate('Products', { category: 'All' })}
               >
-                <Text style={[styles.seeAll, { color: PRIMARY }]}>View All →</Text>
+                <Text style={[styles.seeAll, { color: PRIMARY }]}>
+                  View All →
+                </Text>
               </TouchableOpacity>
             </View>
 
@@ -204,86 +165,24 @@ export default function HomeScreen({ navigation }) {
                   >
                     <Text style={{ fontSize: 26 }}>{cat.icon || '📱'}</Text>
                     <Text style={styles.categoryName}>{cat.name}</Text>
-                    <Text style={styles.categoryCount}>{cat.productCount || 0} items</Text>
+                    <Text style={styles.categoryCount}>
+                      {cat.productCount || 0} items
+                    </Text>
                   </TouchableOpacity>
                 ))}
               </ScrollView>
             )}
           </View>
 
-          {/* 2. COMPATIBLE PHONE MODEL FILTER BAR (Idea B) */}
-          {availablePhones.length > 1 && (
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>📱 Filter by Your Phone Model</Text>
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                style={{ marginTop: 10 }}
-              >
-                {availablePhones.map((phone) => {
-                  const active = selectedPhone === phone;
-                  return (
-                    <TouchableOpacity
-                      key={phone}
-                      style={[
-                        styles.phoneChip,
-                        active && { backgroundColor: PRIMARY, borderColor: PRIMARY },
-                      ]}
-                      onPress={() => setSelectedPhone(phone)}
-                    >
-                      <Text
-                        style={[
-                          styles.phoneChipText,
-                          active && { color: '#FFFFFF', fontWeight: 'bold' },
-                        ]}
-                      >
-                        {phone === 'All' ? 'All Phones' : phone}
-                      </Text>
-                    </TouchableOpacity>
-                  );
-                })}
-              </ScrollView>
-            </View>
-          )}
 
-          {/* 3. FEATURED ACCESSORIES (Idea C) */}
-          {featuredProducts.length > 0 && (
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>🔥 Featured Accessories</Text>
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                style={{ marginTop: 10 }}
-              >
-                {featuredProducts.map((item) => renderProductCard(item, true))}
-              </ScrollView>
-            </View>
-          )}
-
-          {/* 4. NEW ARRIVALS (Idea C) */}
-          {newArrivalProducts.length > 0 && (
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>✨ New Arrivals</Text>
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                style={{ marginTop: 10 }}
-              >
-                {newArrivalProducts.map((item) => renderProductCard(item, true))}
-              </ScrollView>
-            </View>
-          )}
-
-          {/* 5. ALL PRODUCTS GRID + QUICK SORT */}
+          {/* 3. ALL PRODUCTS GRID + SORT */}
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>
-                🛍️ {selectedPhone === 'All' ? 'All Accessories' : `For ${selectedPhone}`} (
-                {filteredProducts.length})
+                🛍️ All Accessories ({products.length})
               </Text>
             </View>
 
-            {/* Quick Sort Pills */}
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
@@ -296,7 +195,10 @@ export default function HomeScreen({ navigation }) {
               ].map((s) => (
                 <TouchableOpacity
                   key={s.key}
-                  style={[styles.sortPill, sortBy === s.key && styles.sortPillActive]}
+                  style={[
+                    styles.sortPill,
+                    sortBy === s.key && styles.sortPillActive,
+                  ]}
                   onPress={() => setSortBy(s.key)}
                 >
                   <Text
@@ -311,17 +213,18 @@ export default function HomeScreen({ navigation }) {
               ))}
             </ScrollView>
 
-            {filteredProducts.length === 0 ? (
+            {products.length === 0 ? (
               <View style={styles.emptyStoreBox}>
                 <Text style={{ fontSize: 38 }}>📦</Text>
                 <Text style={styles.emptyStoreTitle}>No products found</Text>
                 <Text style={styles.emptyStoreSub}>
-                  Tap "⚙️ Admin" at the top-right to add categories & products!
+                  Tap "⚙️ Admin" at the top-right to add categories &
+                  products!
                 </Text>
               </View>
             ) : (
               <View style={styles.grid}>
-                {filteredProducts.map((item) => renderProductCard(item, false))}
+                {products.map((item) => renderProductCard(item, false))}
               </View>
             )}
           </View>
@@ -380,18 +283,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#E5E7EB',
   },
-  categoryName: { fontWeight: 'bold', fontSize: 13, color: '#1F2937', marginTop: 6 },
-  categoryCount: { fontSize: 11, color: '#6B7280', marginTop: 2 },
-  phoneChip: {
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#D1D5DB',
-    marginRight: 8,
+  categoryName: {
+    fontWeight: 'bold',
+    fontSize: 13,
+    color: '#1F2937',
+    marginTop: 6,
   },
-  phoneChipText: { fontSize: 13, color: '#374151', fontWeight: '500' },
+  categoryCount: { fontSize: 11, color: '#6B7280', marginTop: 2 },
   sortPill: {
     paddingHorizontal: 12,
     paddingVertical: 6,
@@ -416,12 +314,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#E5E7EB',
   },
-  horizontalCard: {
-    width: 175,
-    marginRight: 12,
-  },
+  horizontalCard: { width: 175, marginRight: 12 },
   imageBox: { width: '100%', height: 145, backgroundColor: '#F9FAFB' },
-  cardImage: { width: '100%', height: '100%', resizeMode: 'cover' },
+    cardImage: { width: '100%', height: '100%', resizeMode: 'contain', backgroundColor: '#F9FAFB' },
   placeholderImg: {
     width: '100%',
     height: '100%',
@@ -438,9 +333,18 @@ const styles = StyleSheet.create({
   },
   stockPillText: { fontSize: 10, fontWeight: 'bold' },
   cardBody: { padding: 10 },
-  brandText: { fontSize: 11, color: '#6B7280', fontWeight: '600', textTransform: 'uppercase' },
-  productTitle: { fontSize: 14, fontWeight: 'bold', color: '#111827', marginTop: 2 },
-  compatText: { fontSize: 11, color: '#2563EB', marginTop: 4 },
+  brandText: {
+    fontSize: 11,
+    color: '#6B7280',
+    fontWeight: '600',
+    textTransform: 'uppercase',
+  },
+  productTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#111827',
+    marginTop: 2,
+  },
   priceRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -448,7 +352,6 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   mrpText: { fontSize: 15, fontWeight: 'bold', color: '#111827' },
-  ratingText: { fontSize: 12, color: '#D97706', fontWeight: '600' },
   emptyStoreBox: {
     backgroundColor: '#FFFFFF',
     padding: 30,
@@ -456,6 +359,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 6,
   },
-  emptyStoreTitle: { fontSize: 16, fontWeight: 'bold', color: '#111827', marginTop: 8 },
-  emptyStoreSub: { fontSize: 13, color: '#6B7280', marginTop: 4, textAlign: 'center' },
+  emptyStoreTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#111827',
+    marginTop: 8,
+  },
+  emptyStoreSub: {
+    fontSize: 13,
+    color: '#6B7280',
+    marginTop: 4,
+    textAlign: 'center',
+  },
 });

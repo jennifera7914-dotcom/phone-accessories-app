@@ -13,7 +13,7 @@ const errMsg = (e) =>
 
 // Field and Toggle live OUTSIDE the main function on purpose:
 // defined inside, React would rebuild them on every keystroke and the box would lose focus.
-function Field({ label, value, onChange, keyboard = 'default', multiline = false }) {
+function Field({ label, value, onChange, keyboard = 'default', multiline = false, placeholder = '' }) {
   return (
     <View style={styles.field}>
       <Text style={styles.label}>{label}</Text>
@@ -23,7 +23,7 @@ function Field({ label, value, onChange, keyboard = 'default', multiline = false
         onChangeText={onChange}
         keyboardType={keyboard}
         multiline={multiline}
-        placeholder={label}
+        placeholder={placeholder}
         placeholderTextColor="#aaa"
       />
     </View>
@@ -54,8 +54,6 @@ export default function AddProduct({ navigation, route }) {
     stockQty: editing?.stockQty != null ? String(editing.stockQty) : '',
     image1: editing?.image1 ?? '',
     inStock: editing?.inStock ?? true,
-    isFeatured: editing?.isFeatured ?? false,
-    isNewArrival: editing?.isNewArrival ?? false,
   });
   const [saving, setSaving] = useState(false);
 
@@ -72,7 +70,7 @@ export default function AddProduct({ navigation, route }) {
       ? Number(form.discount)
       : mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0;
 
-    // Spellings must match Java's JSON: stockQty, inStock, isFeatured, isNewArrival, image1
+    // Spellings must match Java's JSON: stockQty, inStock, image1
     const payload = {
       ...(editing || {}),        // when editing, keeps id, image2, rating, createdAt untouched
       name: form.name.trim(),
@@ -85,8 +83,6 @@ export default function AddProduct({ navigation, route }) {
       stockQty: form.stockQty.trim() ? Number(form.stockQty) : 0,
       image1: form.image1.trim() || null,
       inStock: form.inStock,
-      isFeatured: form.isFeatured,
-      isNewArrival: form.isNewArrival,
     };
 
     try {
@@ -105,19 +101,17 @@ export default function AddProduct({ navigation, route }) {
     <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 40 }}>
       <Text style={styles.title}>{editing ? `Edit #${editing.id}` : 'Add Product'}</Text>
 
-      <Field label="Name *" value={form.name} onChange={(v) => set('name', v)} />
-      <Field label="Category (Covers, Chargers, Cables…)" value={form.category} onChange={(v) => set('category', v)} />
-      <Field label="Brand" value={form.brand} onChange={(v) => set('brand', v)} />
-      <Field label="Price *" value={form.price} onChange={(v) => set('price', v)} keyboard="numeric" />
-      <Field label="MRP" value={form.mrp} onChange={(v) => set('mrp', v)} keyboard="numeric" />
-      <Field label="Discount % (blank = auto)" value={form.discount} onChange={(v) => set('discount', v)} keyboard="numeric" />
-      <Field label="Stock quantity" value={form.stockQty} onChange={(v) => set('stockQty', v)} keyboard="numeric" />
+       <Field label="Name *" value={form.name} onChange={(v) => set('name', v)} placeholder="Enter product name (e.g., MagSafe Clear Shockproof Case)" />
+      <Field label="Category" value={form.category} onChange={(v) => set('category', v)} placeholder="Tap to select an existing category" />
+            <Field label="Brand" value={form.brand} onChange={(v) => set('brand', v)} placeholder="Enter brand (e.g., Spigen / Anker)" />
+            <Field label="Price *" value={form.price} onChange={(v) => set('price', v)} keyboard="numeric" placeholder="Enter price (e.g., 499)" />
+            <Field label="Price *" value={form.price} onChange={(v) => set('price', v)} keyboard="numeric" placeholder="Enter price (e.g., 499)" />
+            <Field label="Discount % (blank = auto)" value={form.discount} onChange={(v) => set('discount', v)} keyboard="numeric" placeholder="Enter discount % (e.g., 50)" />
+            <Field label="Stock quantity" value={form.stockQty} onChange={(v) => set('stockQty', v)} keyboard="numeric" placeholder="Enter stock quantity (e.g., 50)" />
       <Field label="Image URL" value={form.image1} onChange={(v) => set('image1', v)} />
-      <Field label="Description" value={form.description} onChange={(v) => set('description', v)} multiline />
+            <Field label="Description" value={form.description} onChange={(v) => set('description', v)} multiline placeholder="Enter product details (e.g., material, features, warranty)" />
 
       <Toggle label="In stock" value={form.inStock} onChange={(v) => set('inStock', v)} />
-      <Toggle label="Featured" value={form.isFeatured} onChange={(v) => set('isFeatured', v)} />
-      <Toggle label="New arrival" value={form.isNewArrival} onChange={(v) => set('isNewArrival', v)} />
 
       <TouchableOpacity style={[styles.saveBtn, saving && { opacity: 0.6 }]} onPress={save} disabled={saving}>
         <Text style={styles.saveText}>{saving ? 'Saving…' : editing ? 'Update' : 'Save'}</Text>

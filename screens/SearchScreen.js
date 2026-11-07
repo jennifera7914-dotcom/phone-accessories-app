@@ -93,7 +93,7 @@ export default function SearchScreen({ navigation }) {
                 <View style={{ flex: 1 }}>
                   <Text style={styles.name}>{item.name}</Text>
                   <Text style={styles.meta}>
-                    {item.category} {item.compatiblePhones ? `• 📱 ${item.compatiblePhones}` : ''}
+                    {item.category}
                   </Text>
                   <Text style={styles.mrp}>MRP: ₹{item.mrp ?? item.price}</Text>
                 </View>
