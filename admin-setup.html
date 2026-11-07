@@ -1,0 +1,252 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Owner Setup - Mobile Accessory Hub</title>
+    <meta charset="UTF-8" />
+    <style>
+      body {
+        font-family: Arial;
+        background: #f5f5f5;
+        margin: 0;
+        padding: 20px;
+      }
+      .card {
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        max-width: 550px;
+        margin: 40px auto;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #6200ee;
+        text-align: center;
+        margin-bottom: 5px;
+      }
+      .sub {
+        text-align: center;
+        color: #666;
+        margin-top: 0;
+        font-size: 13px;
+      }
+      input {
+        width: 100%;
+        padding: 12px;
+        margin: 8px 0;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-sizing: border-box;
+      }
+      button {
+        background: #6200ee;
+        color: white;
+        border: none;
+        padding: 14px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        width: 100%;
+        margin-top: 10px;
+      }
+      button:disabled {
+        background: #aaa;
+        cursor: not-allowed;
+      }
+      .msg {
+        text-align: center;
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        display: none;
+      }
+      .success {
+        background: #d4edda;
+        color: #155724;
+        display: block;
+      }
+      .error {
+        background: #f8d7da;
+        color: #721c24;
+        display: block;
+      }
+      .info {
+        background: #fff3cd;
+        color: #856404;
+        display: block;
+      }
+      .row {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .row input {
+        flex: 1;
+      }
+      .eye {
+        cursor: pointer;
+        font-size: 20px;
+        padding: 8px;
+        user-select: none;
+      }
+      .hint {
+        font-size: 11px;
+        color: #888;
+        margin: -5px 0 5px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>Owner Setup</h1>
+      <p class="sub">Create Owner Account - One Time Only</p>
+      <div id="msg" class="msg"></div>
+
+      <div id="formArea">
+        <input
+          id="email"
+          placeholder="Primary Owner Email * (must end with @gmail.com)"
+          type="email"
+        />
+        <p class="hint">This is your main login email</p>
+
+        <input
+          id="recoveryEmail"
+          placeholder="Recovery Email * (different @gmail.com)"
+          type="email"
+        />
+        <p class="hint">
+          If you forget Primary Email, reminder will be sent here
+        </p>
+
+        <div class="row">
+          <input
+            id="password"
+            placeholder="Create Password * (min 4 chars)"
+            type="password"
+          />
+          <span class="eye" onclick="toggle('password', this)">👁️</span>
+        </div>
+
+        <div class="row">
+          <input
+            id="confirm"
+            placeholder="Confirm Password *"
+            type="password"
+          />
+          <span class="eye" onclick="toggle('confirm', this)">👁️</span>
+        </div>
+
+        <button id="btn" onclick="createAdmin()">Create Owner Account</button>
+        <p
+          style="
+            font-size: 11px;
+            color: #888;
+            text-align: center;
+            margin-top: 10px;
+          "
+        >
+          This page will lock forever after one owner is created. Even builder
+          cannot create again.
+        </p>
+      </div>
+
+      <div id="lockedArea" style="display: none; text-align: center">
+        <p style="font-size: 16px">🔒 Owner already exists</p>
+        <p style="color: #666; font-size: 13px">
+          Please go to Owner Login to continue.
+        </p>
+        <button onclick="goAdmin()">Go to Owner Login →</button>
+      </div>
+    </div>
+    <script>
+      const API_CHECK = "http://localhost:8080/api/admin/check-setup";
+      const API_SETUP = "http://localhost:8080/api/admin/setup";
+
+      function toggle(id, el) {
+        const inp = document.getElementById(id);
+        inp.type = inp.type === "password" ? "text" : "password";
+        el.textContent = inp.type === "password" ? "👁️" : "🙈";
+      }
+      function showMsg(text, type) {
+        const el = document.getElementById("msg");
+        el.textContent = text;
+        el.className = "msg " + type;
+      }
+      function goAdmin() {
+        window.location.href = "admin.html";
+      }
+
+      async function check() {
+        try {
+          const res = await fetch(API_CHECK);
+          const data = await res.json();
+          if (data.adminExists) {
+            document.getElementById("formArea").style.display = "none";
+            document.getElementById("lockedArea").style.display = "block";
+            showMsg("Owner account already created. Setup is locked.", "info");
+          }
+        } catch (e) {
+          showMsg(
+            "Cannot connect to backend. Is IntelliJ running on port 8080?",
+            "error",
+          );
+        }
+      }
+
+      async function createAdmin() {
+        const email = document
+          .getElementById("email")
+          .value.trim()
+          .toLowerCase();
+        const recoveryEmail = document
+          .getElementById("recoveryEmail")
+          .value.trim()
+          .toLowerCase();
+        const password = document.getElementById("password").value;
+        const confirm = document.getElementById("confirm").value;
+        if (!email || !recoveryEmail || !password || !confirm) {
+          showMsg("Please fill all fields", "error");
+          return;
+        }
+        if (!email.endsWith("@gmail.com")) {
+          showMsg("Primary email must end with @gmail.com", "error");
+          return;
+        }
+        if (!recoveryEmail.endsWith("@gmail.com")) {
+          showMsg("Recovery email must end with @gmail.com", "error");
+          return;
+        }
+        if (email === recoveryEmail) {
+          showMsg("Primary and Recovery email must be different", "error");
+          return;
+        }
+        if (password.length < 4) {
+          showMsg("Password must be at least 4 characters", "error");
+          return;
+        }
+        if (password !== confirm) {
+          showMsg("Passwords do not match", "error");
+          return;
+        }
+
+        try {
+          const res = await fetch(API_SETUP, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, recoveryEmail, password }),
+          });
+          const out = await res.json();
+          if (res.ok) {
+            showMsg(out.message + " Redirecting to Owner Login...", "success");
+            setTimeout(goAdmin, 1500);
+          } else {
+            showMsg(out.message || "Failed", "error");
+          }
+        } catch (e) {
+          showMsg("Cannot connect to backend. Is IntelliJ running?", "error");
+        }
+      }
+      window.onload = check;
+    </script>
+  </body>
+</html>

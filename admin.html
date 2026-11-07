@@ -1,0 +1,682 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Owner Dashboard - Mobile Accessory Hub</title>
+    <meta charset="UTF-8" />
+    <style>
+      body {
+        font-family: Arial;
+        background: #f5f5f5;
+        margin: 0;
+        padding: 20px;
+      }
+      h1 {
+        color: #6200ee;
+        text-align: center;
+        margin-bottom: 5px;
+      }
+      .sub {
+        text-align: center;
+        color: #666;
+        margin-top: 0;
+      }
+      .card {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        max-width: 850px;
+        margin: 20px auto;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      input {
+        width: 100%;
+        padding: 12px;
+        margin: 8px 0;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-sizing: border-box;
+      }
+      .row {
+        display: flex;
+        gap: 10px;
+      }
+      .row input {
+        flex: 1;
+      }
+      button {
+        background: #6200ee;
+        color: white;
+        border: none;
+        padding: 14px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        width: 100%;
+        margin-top: 10px;
+      }
+      button:hover {
+        background: #4a00b5;
+      }
+      .secondary {
+        background: #e0e0e0;
+        color: #333;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: left;
+        font-size: 13px;
+      }
+      th {
+        background: #6200ee;
+        color: white;
+      }
+      .actionBtn {
+        padding: 6px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+        width: auto;
+        margin: 2px;
+      }
+      .edit {
+        background: #007aff;
+      }
+      .del {
+        background: #ff3b30;
+      }
+      .msg {
+        text-align: center;
+        padding: 10px;
+        margin: 10px auto;
+        max-width: 850px;
+        border-radius: 8px;
+        display: none;
+      }
+      .success {
+        background: #d4edda;
+        color: #155724;
+        display: block;
+      }
+      .error {
+        background: #f8d7da;
+        color: #721c24;
+        display: block;
+      }
+      .hint {
+        font-size: 11px;
+        color: #888;
+        margin: -5px 0 5px 0;
+      }
+      .eye {
+        cursor: pointer;
+        font-size: 20px;
+        padding: 8px;
+        user-select: none;
+      }
+      .header {
+        display: flex;
+        justify-content: space-between;
+        alignitems: center;
+        max-width: 850px;
+        margin: 0 auto;
+      }
+      .logout {
+        width: auto;
+        padding: 8px 15px;
+        font-size: 13px;
+        background: #ff3b30;
+      }
+      .linkRow {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 12px;
+      }
+      .linkRow a {
+        color: #6200ee;
+        font-size: 13px;
+        cursor: pointer;
+        text-decoration: underline;
+      }
+      .miniCard {
+        background: #f9f9f9;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 12px;
+        border: 1px solid #eee;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="loginCard" class="card" style="max-width: 520px; margin-top: 40px">
+      <h1>Owner Login</h1>
+      <p class="sub">Mobile Accessory Hub - Owner Only</p>
+      <div id="loginMsg" class="msg"></div>
+      <input
+        id="loginEmail"
+        placeholder="Primary Owner Email (must end with @gmail.com)"
+        type="email"
+      />
+      <div class="row">
+        <input id="loginPass" placeholder="Password" type="password" />
+        <span class="eye" onclick="togglePass('loginPass', this)">👁️</span>
+      </div>
+      <button onclick="ownerLogin()">Login</button>
+
+      <div class="linkRow">
+        <a onclick="toggleForgotPass()">Forgot Password?</a>
+        <a onclick="toggleForgotEmail()">Forgot Email?</a>
+      </div>
+
+      <div id="forgotPassBox" class="miniCard" style="display: none">
+        <h4 style="margin: 0 0 8px 0">Reset Password via OTP</h4>
+        <input id="fpEmail" placeholder="Primary Owner Email" type="email" />
+        <button onclick="requestOtp()" id="otpBtn">
+          Send OTP to Primary Email
+        </button>
+        <div id="otpSection" style="display: none">
+          <input
+            id="fpOtp"
+            placeholder="6-Digit OTP"
+            maxlength="6"
+            inputmode="numeric"
+          />
+          <div class="row">
+            <input
+              id="fpNewPass"
+              placeholder="New Password (min 4 chars)"
+              type="password"
+            />
+            <span class="eye" onclick="togglePass('fpNewPass', this)">👁️</span>
+          </div>
+          <button onclick="resetPass()">Reset Password</button>
+        </div>
+      </div>
+
+      <div id="forgotEmailBox" class="miniCard" style="display: none">
+        <h4 style="margin: 0 0 8px 0">Recover Primary Email</h4>
+        <input id="feRecoveryEmail" placeholder="Recovery Email" type="email" />
+        <button onclick="sendEmailReminder()">
+          Send Primary Email to Recovery Email
+        </button>
+        <p style="font-size: 11px; color: #888; margin: 5px 0 0 0">
+          We will email your Primary Owner Email to this Recovery Email.
+        </p>
+      </div>
+
+      <p
+        style="
+          font-size: 12px;
+          color: #888;
+          text-align: center;
+          margin-top: 14px;
+        "
+      >
+        First time? Create owner account on setup page.
+      </p>
+      <button class="secondary" onclick="location.href = 'admin-setup.html'">
+        Go to Setup
+      </button>
+    </div>
+
+    <div id="dashboard" style="display: none">
+      <div class="header">
+        <h1 style="margin: 0">Owner Dashboard</h1>
+        <button class="logout" onclick="ownerLogout()">Logout</button>
+      </div>
+      <p class="sub">
+        Mobile Accessory Hub - Customer Management
+        <span id="ownerInfo" style="color: #6200ee"></span>
+      </p>
+      <div id="msg" class="msg"></div>
+      <div class="card">
+        <h3 id="formTitle" style="margin: 0 0 10px 0">Add New Customer</h3>
+        <input id="name" placeholder="Customer Name *" />
+        <input id="shopName" placeholder="Shop Name *" />
+        <div class="row">
+          <input
+            id="phone"
+            placeholder="Phone Number * (10 digits)"
+            maxlength="10"
+            inputmode="numeric"
+            oninput="
+              this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)
+            "
+          />
+          <input
+            id="alternatePhone"
+            placeholder="Alternate Phone (optional)"
+            maxlength="10"
+            inputmode="numeric"
+            oninput="
+              this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)
+            "
+          />
+        </div>
+        <p class="hint">
+          Phone: numbers only, exactly 10 digits. Letters auto-blocked.
+        </p>
+        <input
+          id="email"
+          placeholder="Email Address * (must end with @gmail.com)"
+          type="email"
+        />
+        <p class="hint">
+          Example: ramesh@gmail.com - other emails not allowed.
+        </p>
+        <input id="line1" placeholder="Shop Address Line 1 *" />
+        <input id="line2" placeholder="Shop Address Line 2" />
+        <div class="row">
+          <input id="city" placeholder="City (optional)" />
+          <input id="state" placeholder="State (optional)" />
+          <input
+            id="pincode"
+            placeholder="Pincode * (6 digits)"
+            maxlength="6"
+            inputmode="numeric"
+            oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6)"
+          />
+        </div>
+        <input id="gstNumber" placeholder="GST Number (optional)" />
+        <button id="submitBtn" onclick="saveCustomer()">Add Customer</button>
+        <button
+          id="cancelBtn"
+          class="secondary"
+          onclick="cancelEdit()"
+          style="display: none"
+        >
+          Cancel
+        </button>
+        <p
+          style="
+            font-size: 12px;
+            color: #888;
+            text-align: center;
+            margin-bottom: 0;
+          "
+        >
+          Login PIN will be sent to the customer's email automatically on
+          creation.
+        </p>
+      </div>
+      <div class="card">
+        <h3>
+          Customers
+          <button
+            onclick="loadCustomers()"
+            style="
+              width: auto;
+              padding: 8px 15px;
+              font-size: 12px;
+              float: right;
+            "
+          >
+            Refresh
+          </button>
+        </h3>
+        <table>
+          <thead>
+            <tr>
+              <th>S.No</th>
+              <th>Customer / Shop</th>
+              <th>Contact</th>
+              <th>Address</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <tr>
+              <td colspan="5" style="text-align: center; color: #888">
+                Click Refresh to load
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <p style="font-size: 11px; color: #888; text-align: center">
+          S.No is for counting. ID is database number shown in light grey.
+        </p>
+      </div>
+    </div>
+
+    <script>
+      const API_LOGIN = "http://localhost:8080/api/admin/login";
+      const API_CUSTOMERS = "http://localhost:8080/api/admin/customers";
+      const API_FP_REQ =
+        "http://localhost:8080/api/admin/forgot-password/request";
+      const API_FP_RESET =
+        "http://localhost:8080/api/admin/forgot-password/reset";
+      const API_FE = "http://localhost:8080/api/admin/forgot-email";
+
+      function togglePass(id, el) {
+        const inp = document.getElementById(id);
+        inp.type = inp.type === "password" ? "text" : "password";
+        el.textContent = inp.type === "password" ? "👁️" : "🙈";
+      }
+      function showLoginMsg(text, isError) {
+        const el = document.getElementById("loginMsg");
+        el.textContent = text;
+        el.className = isError ? "msg error" : "msg success";
+        el.style.display = "block";
+        setTimeout(() => (el.style.display = "none"), 3500);
+      }
+      function showMsg(text, isError = false) {
+        const el = document.getElementById("msg");
+        el.textContent = text;
+        el.className = isError ? "msg error" : "msg success";
+        el.style.display = "block";
+        setTimeout(() => (el.style.display = "none"), 4000);
+      }
+
+      function toggleForgotPass() {
+        const b = document.getElementById("forgotPassBox");
+        b.style.display = b.style.display === "none" ? "block" : "none";
+        document.getElementById("forgotEmailBox").style.display = "none";
+      }
+      function toggleForgotEmail() {
+        const b = document.getElementById("forgotEmailBox");
+        b.style.display = b.style.display === "none" ? "block" : "none";
+        document.getElementById("forgotPassBox").style.display = "none";
+      }
+
+      async function requestOtp() {
+        const email = document
+          .getElementById("fpEmail")
+          .value.trim()
+          .toLowerCase();
+        if (!email.endsWith("@gmail.com")) {
+          showLoginMsg("Primary email must end with @gmail.com", true);
+          return;
+        }
+        try {
+          const res = await fetch(API_FP_REQ, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email }),
+          });
+          const out = await res.json();
+          if (res.ok) {
+            showLoginMsg(out.message, false);
+            document.getElementById("otpSection").style.display = "block";
+          } else showLoginMsg(out.message || "Failed", true);
+        } catch (e) {
+          showLoginMsg("Cannot connect to backend", true);
+        }
+      }
+      async function resetPass() {
+        const email = document
+          .getElementById("fpEmail")
+          .value.trim()
+          .toLowerCase();
+        const otp = document.getElementById("fpOtp").value.trim();
+        const newPassword = document.getElementById("fpNewPass").value;
+        if (!otp || !newPassword) {
+          showLoginMsg("Enter OTP and New Password", true);
+          return;
+        }
+        try {
+          const res = await fetch(API_FP_RESET, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, otp, newPassword }),
+          });
+          const out = await res.json();
+          if (res.ok) {
+            showLoginMsg(out.message, false);
+            document.getElementById("forgotPassBox").style.display = "none";
+          } else showLoginMsg(out.message || "Failed", true);
+        } catch (e) {
+          showLoginMsg("Cannot connect to backend", true);
+        }
+      }
+      async function sendEmailReminder() {
+        const recoveryEmail = document
+          .getElementById("feRecoveryEmail")
+          .value.trim()
+          .toLowerCase();
+        if (!recoveryEmail.endsWith("@gmail.com")) {
+          showLoginMsg("Recovery email must end with @gmail.com", true);
+          return;
+        }
+        try {
+          const res = await fetch(API_FE, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ recoveryEmail }),
+          });
+          const out = await res.json();
+          if (res.ok) showLoginMsg(out.message, false);
+          else showLoginMsg(out.message || "Failed", true);
+        } catch (e) {
+          showLoginMsg("Cannot connect to backend", true);
+        }
+      }
+
+      function checkAuth() {
+        const admin = localStorage.getItem("admin");
+        if (admin) {
+          const a = JSON.parse(admin);
+          document.getElementById("loginCard").style.display = "none";
+          document.getElementById("dashboard").style.display = "block";
+          document.getElementById("ownerInfo").textContent = " - " + a.email;
+          loadCustomers();
+        } else {
+          document.getElementById("loginCard").style.display = "block";
+          document.getElementById("dashboard").style.display = "none";
+        }
+      }
+      async function ownerLogin() {
+        const email = document
+          .getElementById("loginEmail")
+          .value.trim()
+          .toLowerCase();
+        const password = document.getElementById("loginPass").value;
+        if (!email || !password) {
+          showLoginMsg("Please fill email and password", true);
+          return;
+        }
+        if (!email.endsWith("@gmail.com")) {
+          showLoginMsg("Email must end with @gmail.com", true);
+          return;
+        }
+        try {
+          const res = await fetch(API_LOGIN, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password }),
+          });
+          const out = await res.json();
+          if (res.ok) {
+            localStorage.setItem("admin", JSON.stringify(out));
+            showLoginMsg(out.message, false);
+            setTimeout(checkAuth, 500);
+          } else showLoginMsg(out.message || "Login failed", true);
+        } catch (e) {
+          showLoginMsg("Cannot connect to backend. Is IntelliJ running?", true);
+        }
+      }
+      function ownerLogout() {
+        localStorage.removeItem("admin");
+        checkAuth();
+        showLoginMsg("Logged out", false);
+      }
+
+      let editingId = null;
+      function getFormData() {
+        return {
+          name: document.getElementById("name").value.trim(),
+          shopName: document.getElementById("shopName").value.trim(),
+          phone: document.getElementById("phone").value.trim(),
+          alternatePhone: document
+            .getElementById("alternatePhone")
+            .value.trim(),
+          email: document.getElementById("email").value.trim().toLowerCase(),
+          gstNumber: document.getElementById("gstNumber").value.trim(),
+          line1: document.getElementById("line1").value.trim(),
+          line2: document.getElementById("line2").value.trim(),
+          city: document.getElementById("city").value.trim(),
+          state: document.getElementById("state").value.trim(),
+          pincode: document.getElementById("pincode").value.trim(),
+        };
+      }
+      function clearForm() {
+        [
+          "name",
+          "shopName",
+          "phone",
+          "alternatePhone",
+          "email",
+          "line1",
+          "line2",
+          "city",
+          "state",
+          "pincode",
+          "gstNumber",
+        ].forEach((id) => (document.getElementById(id).value = ""));
+      }
+      function cancelEdit() {
+        editingId = null;
+        clearForm();
+        document.getElementById("formTitle").textContent = "Add New Customer";
+        document.getElementById("submitBtn").textContent = "Add Customer";
+        document.getElementById("cancelBtn").style.display = "none";
+      }
+      async function saveCustomer() {
+        const d = getFormData();
+        if (
+          !d.name ||
+          !d.shopName ||
+          !d.phone ||
+          !d.email ||
+          !d.line1 ||
+          !d.pincode
+        ) {
+          showMsg(
+            "Please fill Name, Shop Name, Phone, Email, Line1, Pincode",
+            true,
+          );
+          return;
+        }
+        if (!/^\d{10}$/.test(d.phone)) {
+          showMsg("Phone must be exactly 10 digits", true);
+          return;
+        }
+        if (d.alternatePhone && !/^\d{10}$/.test(d.alternatePhone)) {
+          showMsg("Alternate phone must be 10 digits", true);
+          return;
+        }
+        if (!d.email.endsWith("@gmail.com")) {
+          showMsg("Email must end with @gmail.com", true);
+          return;
+        }
+        if (!/^\d{6}$/.test(d.pincode)) {
+          showMsg("Pincode must be 6 digits", true);
+          return;
+        }
+        try {
+          let res;
+          if (editingId === null)
+            res = await fetch(API_CUSTOMERS, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(d),
+            });
+          else
+            res = await fetch(API_CUSTOMERS + "/" + editingId, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(d),
+            });
+          const out = await res.json();
+          if (res.ok) {
+            showMsg(out.message);
+            cancelEdit();
+            loadCustomers();
+          } else showMsg(out.message || "Failed", true);
+        } catch (e) {
+          showMsg("Cannot connect to backend", true);
+        }
+      }
+      async function loadCustomers() {
+        try {
+          const res = await fetch(API_CUSTOMERS);
+          const list = await res.json();
+          const tbody = document.getElementById("tableBody");
+          if (list.length === 0) {
+            tbody.innerHTML =
+              '<tr><td colspan="5" style="text-align:center;">No customers yet</td></tr>';
+            return;
+          }
+          tbody.innerHTML = list
+            .map((u, index) => {
+              const addr = u.address
+                ? `${u.address.line1}${u.address.line2 ? ", " + u.address.line2 : ""}<br><span style="color:#666;">${u.address.city ? u.address.city + ", " : ""}${u.address.state ? u.address.state + " " : ""}- ${u.address.pincode}</span>`
+                : "-";
+              const alt = u.alternatePhone
+                ? `<br><span style="font-size:11px; color:#666;">Alt: ${u.alternatePhone}</span>`
+                : "";
+              return `<tr><td><b>${index + 1}</b><br><span style="font-size:10px; color:#999;">ID:${u.id}</span></td><td><b>${u.name}</b><br><span style="color:#666;">${u.shopName}</span><br><span style="font-size:11px;">GST: ${u.gstNumber || "-"}</span></td><td>${u.phone}${alt}<br><span style="font-size:11px; color:#6200EE;">${u.email}</span></td><td style="font-size:12px;">${addr}</td><td><button class="actionBtn edit" onclick="editCustomer(${u.id})">Edit</button><button class="actionBtn del" onclick="deleteCustomer(${u.id})">Delete</button></td></tr>`;
+            })
+            .join("");
+        } catch (e) {
+          showMsg("Failed to load. Check backend", true);
+        }
+      }
+      async function editCustomer(id) {
+        try {
+          const res = await fetch(API_CUSTOMERS + "/" + id);
+          const u = await res.json();
+          document.getElementById("name").value = u.name || "";
+          document.getElementById("shopName").value = u.shopName || "";
+          document.getElementById("phone").value = u.phone || "";
+          document.getElementById("alternatePhone").value =
+            u.alternatePhone || "";
+          document.getElementById("email").value = u.email || "";
+          document.getElementById("gstNumber").value = u.gstNumber || "";
+          document.getElementById("line1").value = u.address
+            ? u.address.line1
+            : "";
+          document.getElementById("line2").value = u.address
+            ? u.address.line2
+            : "";
+          document.getElementById("city").value = u.address
+            ? u.address.city
+            : "";
+          document.getElementById("state").value = u.address
+            ? u.address.state
+            : "";
+          document.getElementById("pincode").value = u.address
+            ? u.address.pincode
+            : "";
+          editingId = id;
+          document.getElementById("formTitle").textContent =
+            "Edit Customer - ID " + id;
+          document.getElementById("submitBtn").textContent = "Update Customer";
+          document.getElementById("cancelBtn").style.display = "block";
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        } catch (e) {
+          showMsg("Failed to load for edit", true);
+        }
+      }
+      async function deleteCustomer(id) {
+        if (!confirm("Delete customer ID " + id + " ?")) return;
+        try {
+          const res = await fetch(API_CUSTOMERS + "/" + id, {
+            method: "DELETE",
+          });
+          const out = await res.json();
+          showMsg(out.message);
+          if (editingId === id) cancelEdit();
+          loadCustomers();
+        } catch (e) {
+          showMsg("Delete failed", true);
+        }
+      }
+      window.onload = checkAuth;
+    </script>
+  </body>
+</html>
