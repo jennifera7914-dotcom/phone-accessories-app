@@ -1,5 +1,5 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRouter } from "expo-router";
+﻿import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import {
   ActivityIndicator,
@@ -14,7 +14,7 @@ import {
 import { useTheme } from "../context/ThemeContext";
 
 export default function AdminLoginScreen() {
-  const router = useRouter();
+  const navigation = useNavigation<any>();
   const { colors } = useTheme();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -50,7 +50,7 @@ export default function AdminLoginScreen() {
       const data = await res.json();
       if (res.ok) {
         await AsyncStorage.setItem("admin", JSON.stringify(data));
-        router.replace("/admin-dashboard" as any);
+        navigation.replace("OwnerDashboard");
       } else {
         Alert.alert("Login Failed", data.message || "Wrong email or password");
       }
@@ -148,7 +148,7 @@ export default function AdminLoginScreen() {
       style={{ flex: 1, backgroundColor: colors.background }}
       contentContainerStyle={{ padding: 30, paddingTop: 60 }}
     >
-      <Text style={[styles.title, { color: colors.text }]}>🔑 Owner Login</Text>
+      <Text style={[styles.title, { color: colors.text }]}>ðŸ”‘ Owner Login</Text>
       <Text style={[styles.sub, { color: colors.subText }]}>
         Mobile Accessory Hub - Owner Only
       </Text>
@@ -179,7 +179,7 @@ export default function AdminLoginScreen() {
           onPress={() => setShowPass(!showPass)}
           style={styles.eyeBtn}
         >
-          <Text style={styles.eye}>{showPass ? "🙈" : "👁️"}</Text>
+          <Text style={styles.eye}>{showPass ? "ðŸ™ˆ" : "ðŸ‘ï¸"}</Text>
         </TouchableOpacity>
       </View>
 
@@ -290,7 +290,7 @@ export default function AdminLoginScreen() {
                   onPress={() => setShowNewPass(!showNewPass)}
                   style={styles.eyeBtn}
                 >
-                  <Text style={styles.eye}>{showNewPass ? "🙈" : "👁️"}</Text>
+                  <Text style={styles.eye}>{showNewPass ? "ðŸ™ˆ" : "ðŸ‘ï¸"}</Text>
                 </TouchableOpacity>
               </View>
               <TouchableOpacity
@@ -339,9 +339,9 @@ export default function AdminLoginScreen() {
         </View>
       )}
 
-      <TouchableOpacity onPress={() => router.replace("/choose-role" as any)}>
+      <TouchableOpacity onPress={() => navigation.replace("ChooseRole")}>
         <Text style={[styles.link, { color: colors.primary }]}>
-          ← Back to Choose Role
+          â† Back to Choose Role
         </Text>
       </TouchableOpacity>
     </ScrollView>
@@ -380,3 +380,4 @@ const styles = StyleSheet.create({
   miniCard: { padding: 15, borderRadius: 10, borderWidth: 1, marginTop: 14 },
   miniTitle: { fontWeight: "bold", marginBottom: 10 },
 });
+

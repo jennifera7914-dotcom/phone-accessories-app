@@ -1,5 +1,5 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRouter } from "expo-router";
+﻿import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import {
     ActivityIndicator,
@@ -13,7 +13,7 @@ import {
 import { useTheme } from "../context/ThemeContext";
 
 export default function ProfileScreen() {
-  const router = useRouter();
+  const navigation = useNavigation<any>();
   const { isDark, colors, toggleTheme } = useTheme();
   const [user, setUser] = useState<any>(null);
   const [details, setDetails] = useState<any>(null);
@@ -60,8 +60,8 @@ export default function ProfileScreen() {
       style={{ flex: 1, backgroundColor: colors.background }}
       contentContainerStyle={{ padding: 20, paddingTop: 50 }}
     >
-      <TouchableOpacity onPress={() => router.back()}>
-        <Text style={{ color: colors.primary, fontSize: 16 }}>← Back</Text>
+      <TouchableOpacity onPress={() => navigation.goBack()}>
+        <Text style={{ color: colors.primary, fontSize: 16 }}>â† Back</Text>
       </TouchableOpacity>
 
       <Text style={[styles.title, { color: colors.text }]}>My Profile</Text>
@@ -93,7 +93,7 @@ export default function ProfileScreen() {
           </View>
         </View>
         <Text style={{ color: colors.subText, fontSize: 12, marginTop: 5 }}>
-          When you change here, whole app colors change White ↔ Dark
+          When you change here, whole app colors change White â†” Dark
         </Text>
       </View>
 
@@ -212,3 +212,4 @@ const styles = StyleSheet.create({
   label: { fontSize: 12, marginTop: 8 },
   value: { fontSize: 16, fontWeight: "600", marginTop: 2 },
 });
+

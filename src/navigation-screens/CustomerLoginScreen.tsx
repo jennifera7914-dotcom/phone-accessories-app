@@ -1,5 +1,5 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRouter } from "expo-router";
+﻿import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import {
   ActivityIndicator,
@@ -12,7 +12,7 @@ import {
 } from "react-native";
 
 export default function LoginScreen() {
-  const router = useRouter();
+  const navigation = useNavigation<any>();
   const [identifier, setIdentifier] = useState("");
   const [pin, setPin] = useState("");
   const [showPin, setShowPin] = useState(false);
@@ -59,7 +59,7 @@ export default function LoginScreen() {
 
       if (response.ok) {
         await AsyncStorage.setItem("user", JSON.stringify(data));
-        router.replace("/home" as any);
+        navigation.replace("Home");
       } else if (response.status === 404) {
         const hint = isPhoneLike
           ? "Try logging in with Customer Name."
@@ -88,7 +88,7 @@ export default function LoginScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>📱 Mobile Accessory Hub</Text>
+      <Text style={styles.title}>ðŸ“± Mobile Accessory Hub</Text>
       <Text style={styles.subtitle}>
         Login with Phone or Name + PIN sent on Gmail
       </Text>
@@ -115,7 +115,7 @@ export default function LoginScreen() {
           style={styles.eyeBtn}
           onPress={() => setShowPin(!showPin)}
         >
-          <Text style={styles.eyeText}>{showPin ? "🙈" : "👁️"}</Text>
+          <Text style={styles.eyeText}>{showPin ? "ðŸ™ˆ" : "ðŸ‘ï¸"}</Text>
         </TouchableOpacity>
       </View>
 
@@ -206,3 +206,4 @@ const styles = StyleSheet.create({
   },
   hintSmall: { color: "#888", textAlign: "center", fontSize: 11, marginTop: 5 },
 });
+

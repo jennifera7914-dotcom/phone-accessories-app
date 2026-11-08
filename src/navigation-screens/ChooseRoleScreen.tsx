@@ -1,9 +1,9 @@
-import { useRouter } from "expo-router";
+﻿import { useNavigation } from "@react-navigation/native";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useTheme } from "../context/ThemeContext";
 
 export default function ChooseRoleScreen() {
-  const router = useRouter();
+  const navigation = useNavigation<any>();
   const { colors } = useTheme();
 
   return (
@@ -20,9 +20,9 @@ export default function ChooseRoleScreen() {
           styles.card,
           { backgroundColor: colors.card, borderColor: colors.border },
         ]}
-        onPress={() => router.push("/login" as any)}
+        onPress={() => navigation.navigate("CustomerLogin")}
       >
-        <Text style={styles.icon}>👤</Text>
+        
         <Text style={[styles.cardTitle, { color: colors.text }]}>Customer</Text>
         <Text style={[styles.cardDesc, { color: colors.subText }]}>
           Phone / Name + 4-Digit PIN
@@ -34,9 +34,9 @@ export default function ChooseRoleScreen() {
           styles.card,
           { backgroundColor: colors.card, borderColor: colors.border },
         ]}
-        onPress={() => router.push("/admin-login" as any)}
+        onPress={() => navigation.navigate("OwnerLogin")}
       >
-        <Text style={styles.icon}>🔑</Text>
+        
         <Text style={[styles.cardTitle, { color: colors.text }]}>Owner</Text>
         <Text style={[styles.cardDesc, { color: colors.subText }]}>
           Email + Password
@@ -67,3 +67,5 @@ const styles = StyleSheet.create({
   cardTitle: { fontSize: 18, fontWeight: "bold", marginTop: 10 },
   cardDesc: { fontSize: 12, marginTop: 4, textAlign: "center" },
 });
+
+

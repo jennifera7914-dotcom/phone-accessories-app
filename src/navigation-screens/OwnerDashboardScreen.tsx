@@ -1,5 +1,5 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRouter } from "expo-router";
+﻿import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -16,7 +16,7 @@ import { useTheme } from "../context/ThemeContext";
 const API = "http://localhost:8080/api/admin/customers";
 
 export default function AdminDashboardScreen() {
-  const router = useRouter();
+  const navigation = useNavigation<any>();
   const { colors } = useTheme();
   const [adminEmail, setAdminEmail] = useState("");
   const [customers, setCustomers] = useState<any[]>([]);
@@ -44,7 +44,7 @@ export default function AdminDashboardScreen() {
   const checkAdmin = async () => {
     const admin = await AsyncStorage.getItem("admin");
     if (!admin) {
-      router.replace("/admin-login" as any);
+      navigation.replace("OwnerLogin");
       return;
     }
     const a = JSON.parse(admin);
@@ -53,7 +53,7 @@ export default function AdminDashboardScreen() {
   };
 
   const showMsg = (text: string, isError = false) => {
-    setMsg((isError ? "❌ " : "✅ ") + text);
+    setMsg((isError ? "âŒ " : "âœ… ") + text);
     setTimeout(() => setMsg(""), 3000);
   };
 
@@ -192,12 +192,12 @@ export default function AdminDashboardScreen() {
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem("admin");
-    router.replace("/choose-role" as any);
+    navigation.replace("ChooseRole");
   };
 
   // YOUR REQUEST: Direct switch to Customer View, no login again
   const handleViewAsCustomer = () => {
-    router.push("/home" as any);
+    navigation.navigate("Home");
   };
 
   return (
@@ -233,7 +233,7 @@ export default function AdminDashboardScreen() {
         ]}
       >
         <Text style={[styles.switchText, { color: colors.primary }]}>
-          👁️ View as Customer
+          ðŸ‘ï¸ View as Customer
         </Text>
         <Text style={{ color: colors.subText, fontSize: 11 }}>
           Direct to Customer HOME - No login again
@@ -245,7 +245,7 @@ export default function AdminDashboardScreen() {
           style={{
             textAlign: "center",
             marginTop: 10,
-            color: msg.includes("❌") ? "red" : "green",
+            color: msg.includes("âŒ") ? "red" : "green",
           }}
         >
           {msg}
@@ -526,3 +526,4 @@ const styles = StyleSheet.create({
   },
   logoutText: { color: "#fff", fontWeight: "bold", fontSize: 12 },
 });
+

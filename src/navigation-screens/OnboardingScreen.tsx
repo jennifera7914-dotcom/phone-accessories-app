@@ -1,24 +1,24 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRouter } from "expo-router";
+﻿import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function OnboardingScreen() {
-  const router = useRouter();
+  const navigation = useNavigation<any>();
 
   const handleGetStarted = async () => {
     await AsyncStorage.setItem("hasSeenOnboarding", "true");
-    router.replace("/choose-role" as any);
+    navigation.replace("ChooseRole");
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Welcome to Mobile Accessory Hub! 👋</Text>
+      <Text style={styles.title}>Welcome to Mobile Accessory Hub! ðŸ‘‹</Text>
       <Text style={styles.desc}>
         Wholesale mobile covers, chargers & accessories at best prices. Only for
         registered customers.
       </Text>
       <TouchableOpacity style={styles.button} onPress={handleGetStarted}>
-        <Text style={styles.buttonText}>Get Started →</Text>
+        <Text style={styles.buttonText}>Get Started â†’</Text>
       </TouchableOpacity>
     </View>
   );
@@ -47,3 +47,4 @@ const styles = StyleSheet.create({
   },
   buttonText: { color: "#fff", fontSize: 18, fontWeight: "bold" },
 });
+
