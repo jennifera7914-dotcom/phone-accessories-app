@@ -1,0 +1,1437 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Shop Admin</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, Arial, sans-serif;
+  background: #F1F3F6;
+  color: #212121;
+}
+
+header {
+  background: #172033;
+  color: #fff;
+  padding: 14px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header h1 { font-size: 18px; margin: 0; }
+
+main { max-width: 1100px; margin: 0 auto; padding: 20px; }
+
+.hidden { display: none !important; }
+
+button {
+  cursor: pointer;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.btn-primary { background: #2457C5; color: #fff; }
+.btn-success { background: #12B76A; color: #fff; }
+.btn-danger { background: #D92D20; color: #fff; }
+.btn-light { background: #EEF2F6; color: #212121; }
+.btn-ghost { background: transparent; color: #fff; border: 1px solid #fff; }
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.tab { background: #fff; color: #344054; }
+.tab.active { background: #2457C5; color: #fff; }
+
+.pill {
+  background: #D92D20;
+  color: #fff;
+  border-radius: 10px;
+  padding: 1px 7px;
+  font-size: 11px;
+  margin-left: 6px;
+}
+
+.alertBar {
+  background: #FFFAEB;
+  border: 1px solid #F79009;
+  color: #B54708;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.stat { background: #fff; border-radius: 10px; padding: 14px; }
+.stat .n { font-size: 22px; font-weight: 700; }
+.stat .l { font-size: 12px; color: #667085; margin-top: 4px; }
+
+.panel { background: #fff; border-radius: 10px; padding: 16px; }
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+  align-items: center;
+}
+
+input, select {
+  padding: 9px 10px;
+  border: 1px solid #D0D5DD;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.order {
+  background: #fff;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 14px;
+  border-left: 5px solid #2457C5;
+}
+
+.order-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.code { font-size: 17px; font-weight: 700; }
+
+.badge {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #98A2B3;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.muted { color: #667085; font-size: 13px; }
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+  align-items: center;
+}
+
+.box {
+  background: #F8FAFC;
+  border: 1px solid #E4E7EC;
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 12px;
+}
+
+.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+.timeline div {
+  padding: 6px 0;
+  border-bottom: 1px dashed #EAECF0;
+  font-size: 13px;
+}
+
+.error { color: #D92D20; font-size: 13px; margin-top: 6px; }
+
+.login {
+  max-width: 360px;
+  margin: 80px auto;
+  background: #fff;
+  padding: 24px;
+  border-radius: 12px;
+}
+
+.login input { width: 100%; }
+
+table { width: 100%; border-collapse: collapse; background: #fff; }
+
+th, td {
+  text-align: left;
+  padding: 10px;
+  border-bottom: 1px solid #EAECF0;
+  font-size: 14px;
+  vertical-align: top;
+}
+
+.field { width: 100%; margin-top: 4px; }
+.fieldLabel { margin-top: 10px; }
+
+.retPhoto {
+  max-width: 180px;
+  max-height: 140px;
+  border-radius: 8px;
+  margin-top: 8px;
+  border: 1px solid #E4E7EC;
+}
+
+.retGrid {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 14px;
+  margin-top: 10px;
+}
+
+.chatLayout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 14px;
+}
+
+.conv {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #E4E7EC;
+  margin-bottom: 8px;
+  cursor: pointer;
+  background: #fff;
+}
+
+.conv.active { border-color: #2457C5; background: #EFF4FF; }
+
+.bubble {
+  max-width: 80%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  margin: 6px 0;
+  font-size: 14px;
+}
+
+.bubble.me { background: #2457C5; color: #fff; margin-left: auto; }
+.bubble.them { background: #EEF2F6; color: #212121; }
+.bubble.bot { background: #FFFAEB; color: #7A4A00; border: 1px solid #FEDF89; }
+
+/* SALES REPORT */
+
+.salesSummary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin: 16px 0;
+}
+
+.salesCard {
+  background: #fff;
+  padding: 18px;
+  border-radius: 10px;
+  border: 1px solid #EAECF0;
+}
+
+.salesNumber {
+  font-size: 30px;
+  font-weight: 750;
+  margin-top: 6px;
+}
+
+.salesTitle {
+  font-size: 13px;
+  color: #667085;
+}
+
+.salesLegend {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin: 18px 0;
+  font-size: 13px;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.legendDot {
+  width: 11px;
+  height: 11px;
+  border-radius: 3px;
+  display: inline-block;
+}
+
+.chartScroll {
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.salesChart {
+  min-width: 650px;
+  height: 260px;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 8px;
+  border-bottom: 1px solid #D0D5DD;
+  padding: 10px 4px 0;
+}
+
+.monthGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  min-width: 0;
+}
+
+.barArea {
+  height: 205px;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 3px;
+}
+
+.bar {
+  width: 100%;
+  min-height: 0;
+  border-radius: 4px 4px 0 0;
+  transition: height .3s ease;
+}
+
+.bar.placed { background: #2457C5; }
+.bar.delivered { background: #12B76A; }
+.bar.cancelled { background: #F79009; }
+
+.barValue {
+  font-size: 10px;
+  color: #667085;
+  text-align: center;
+  margin-bottom: 3px;
+  white-space: nowrap;
+}
+
+.monthName {
+  font-size: 11px;
+  color: #667085;
+  margin-top: 9px;
+  text-align: center;
+}
+
+.reportMessage {
+  background: #F8FAFC;
+  border-radius: 8px;
+  padding: 14px;
+  color: #667085;
+  font-size: 13px;
+  margin-top: 12px;
+}
+
+@media (max-width: 800px) {
+  .grid2, .retGrid, .chatLayout { grid-template-columns: 1fr; }
+  .salesSummary { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 500px) {
+  .salesSummary { grid-template-columns: 1fr; }
+  main { padding: 12px; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🛠️ Shop Admin</h1>
+  <button class="btn-ghost hidden" id="logoutBtn" onclick="logout()">Log out</button>
+</header>
+
+<section id="loginView" class="login">
+  <h2 style="margin-top:0">Admin sign-in</h2>
+  <p class="muted">Enter the admin password.</p>
+  <input type="password" id="pw" placeholder="Admin password"
+    onkeydown="if(event.key==='Enter') login()" />
+  <button class="btn-primary" style="width:100%;margin-top:12px" onclick="login()">Sign in</button>
+  <div class="error" id="loginError"></div>
+</section>
+
+<main id="appView" class="hidden">
+
+  <div id="returnAlert" class="alertBar hidden">
+    <span id="returnAlertText"></span>
+    <button class="btn-primary" onclick="showTab('returns')">Review now</button>
+  </div>
+
+  <div id="chatAlert" class="alertBar hidden">
+    <span id="chatAlertText"></span>
+    <button class="btn-primary" onclick="showTab('messages')">Open messages</button>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" id="tab-orders" onclick="showTab('orders')">Orders</button>
+    <button class="tab" id="tab-returns" onclick="showTab('returns')">
+      Returns <span id="returnsPill" class="pill hidden">0</span>
+    </button>
+    <button class="tab" id="tab-messages" onclick="showTab('messages')">
+      Messages <span id="chatPill" class="pill hidden">0</span>
+    </button>
+    <button class="tab" id="tab-customers" onclick="showTab('customers')">Customers</button>
+    <button class="tab" id="tab-sales" onclick="showTab('sales')">Sales Report</button>
+  </div>
+
+  <section id="ordersTab">
+    <div class="cards" id="stats"></div>
+
+    <div class="filters">
+      <select id="statusFilter" onchange="renderOrders()">
+        <option value="">All statuses</option>
+        <option value="placed">Order Placed</option>
+        <option value="delivered">Delivered</option>
+        <option value="cancelled">Cancelled</option>
+      </select>
+
+      <input type="month" id="monthFilter" onchange="renderOrders()" />
+
+      <input type="search" id="searchFilter"
+        placeholder="Search order, name or phone"
+        oninput="renderOrders()" style="min-width:240px" />
+
+      <button class="btn-light" onclick="clearFilters()">Clear</button>
+      <button class="btn-light" onclick="loadOrders()">Refresh</button>
+    </div>
+
+    <div id="ordersList"></div>
+  </section>
+
+  <section id="returnsTab" class="hidden">
+    <div class="filters">
+      <button class="btn-light" onclick="loadReturns()">Refresh</button>
+      <span class="muted" id="returnsCount"></span>
+    </div>
+    <div id="returnsList"></div>
+  </section>
+
+  <section id="messagesTab" class="hidden">
+    <div class="chatLayout">
+      <div>
+        <div class="row" style="justify-content:space-between;margin-bottom:8px">
+          <strong>Conversations</strong>
+          <button class="btn-light" onclick="loadChats()">Refresh</button>
+        </div>
+        <div id="convList"></div>
+      </div>
+
+      <div class="panel">
+        <div id="chatBox"><p class="muted">Select a conversation.</p></div>
+        <div class="row hidden" id="replyRow" style="margin-top:10px">
+          <input id="replyInput" placeholder="Type reply..." style="flex:1"
+            onkeydown="if(event.key==='Enter') sendReply()" />
+          <button class="btn-primary" onclick="sendReply()">Send</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="customersTab" class="hidden">
+    <div class="grid2">
+      <div class="panel">
+        <div class="row" style="justify-content:space-between;margin-bottom:10px">
+          <strong>All customers</strong>
+          <button class="btn-light" onclick="loadCustomers()">Refresh</button>
+        </div>
+        <div id="customersList"></div>
+      </div>
+
+      <div class="panel">
+        <strong id="editTitle">Select a customer to edit</strong>
+        <p class="muted">Customers never type their address. Save it here.</p>
+
+        <form id="custForm" class="hidden" onsubmit="return false;">
+          <div class="label fieldLabel">Customer ID</div>
+          <input id="c_code" class="field" readonly />
+
+          <div class="label fieldLabel">Name</div>
+          <input id="c_name" class="field" />
+
+          <div class="label fieldLabel">Phone</div>
+          <input id="c_phone" class="field" />
+
+          <div class="label fieldLabel">Address line</div>
+          <input id="c_line" class="field" />
+
+          <div class="label fieldLabel">City</div>
+          <input id="c_city" class="field" />
+
+          <div class="label fieldLabel">State</div>
+          <input id="c_state" class="field" />
+
+          <div class="label fieldLabel">Pincode (6 digits)</div>
+          <input id="c_pin" class="field" maxlength="6" />
+
+          <button class="btn-success" style="margin-top:14px" onclick="saveCustomer()">Save customer</button>
+          <div class="error" id="custError"></div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- SALES REPORT TAB -->
+
+  <section id="salesTab" class="hidden">
+    <div class="panel">
+      <div class="row" style="justify-content:space-between">
+        <div>
+          <h2 style="margin:0">Monthly Sales Report</h2>
+          <p class="muted">View placed, delivered and cancelled product quantities.</p>
+        </div>
+
+        <div>
+          <label for="salesYear"><strong>Select year</strong></label><br>
+          <select id="salesYear" onchange="loadSalesReport()"></select>
+        </div>
+      </div>
+
+      <div class="salesSummary">
+        <div class="salesCard">
+          <div class="salesTitle">Total placed products</div>
+          <div class="salesNumber" id="placedTotal">0</div>
+          <div class="muted">Orders currently placed</div>
+        </div>
+
+        <div class="salesCard">
+          <div class="salesTitle">Total delivered products</div>
+          <div class="salesNumber" id="deliveredTotal">0</div>
+          <div class="muted">Successfully delivered</div>
+        </div>
+
+        <div class="salesCard">
+          <div class="salesTitle">Total cancelled products</div>
+          <div class="salesNumber" id="cancelledTotal">0</div>
+          <div class="muted">Cancelled orders counted separately</div>
+        </div>
+      </div>
+
+      <div class="panel" style="border:1px solid #EAECF0">
+        <h3 style="margin-top:0">Monthly product order report</h3>
+
+        <div class="salesLegend">
+          <div class="legendItem">
+            <span class="legendDot" style="background:#2457C5"></span>
+            Placed products
+          </div>
+
+          <div class="legendItem">
+            <span class="legendDot" style="background:#12B76A"></span>
+            Delivered products
+          </div>
+
+          <div class="legendItem">
+            <span class="legendDot" style="background:#F79009"></span>
+            Cancelled products
+          </div>
+        </div>
+
+        <div class="chartScroll">
+          <div id="salesChart" class="salesChart"></div>
+        </div>
+
+        <div id="salesMessage" class="reportMessage">
+          Select a year to view the report.
+        </div>
+      </div>
+
+      <div style="margin-top:14px;text-align:right">
+        <button class="btn-light" onclick="loadSalesReport()">Refresh report</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+const STATUS_LABEL = {
+  placed: "Order Placed",
+  delivered: "Delivered",
+  cancelled: "Cancelled"
+};
+
+const STATUS_COLOR = {
+  placed: "#2457C5",
+  delivered: "#12B76A",
+  cancelled: "#D92D20"
+};
+
+const STATUS_BG = {
+  placed: "#EFF4FF",
+  delivered: "#ECFDF3",
+  cancelled: "#FEF3F2"
+};
+
+const NEXT = {
+  placed: [
+    ["delivered", "✓ Mark as Delivered"],
+    ["cancelled", "Cancel Order"]
+  ],
+  delivered: [],
+  cancelled: []
+};
+
+const RETURN_STATUS = {
+  submitted: {label:"Waiting for review",color:"#B54708",bg:"#FFFAEB"},
+  approved: {label:"Approved",color:"#12B76A",bg:"#ECFDF3"},
+  rejected: {label:"Rejected",color:"#D92D20",bg:"#FEF3F2"}
+};
+
+let orders = [];
+let customers = [];
+let returns = [];
+let chats = [];
+let openChatId = null;
+let pollTimer = null;
+let editingCode = null;
+
+const token = () => sessionStorage.getItem("adminToken") || "";
+const val = id => document.getElementById(id).value.trim();
+
+const setVal = (id, v) => {
+  document.getElementById(id).value = v || "";
+};
+
+function esc(s) {
+  return String(s ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  }[c]));
+}
+
+function fmtDate(v) {
+  if (!v) return "—";
+  const d = new Date(v);
+  if (!isNaN(d)) {
+    return d.toLocaleString("en-IN", {
+      day:"2-digit",
+      month:"short",
+      year:"numeric",
+      hour:"2-digit",
+      minute:"2-digit"
+    });
+  }
+  return String(v).replace("T"," ").slice(0,16);
+}
+
+async function api(path, options = {}) {
+  const res = await fetch(path, {
+    method: options.method || "GET",
+    headers: {
+      "Content-Type":"application/json",
+      "X-Admin-Token":token()
+    },
+    body: options.body ? JSON.stringify(options.body) : undefined
+  });
+
+  const text = await res.text();
+  let data = text;
+
+  try { data = JSON.parse(text); } catch(e) {}
+
+  if (res.status === 401) {
+    logout();
+    throw new Error("Wrong or expired admin password.");
+  }
+
+  if (!res.ok) {
+    throw new Error(
+      typeof data === "string" && data
+        ? data
+        : "Request failed (" + res.status + ")"
+    );
+  }
+
+  return data;
+}
+
+async function login() {
+  const pw = document.getElementById("pw").value.trim();
+  if (!pw) return;
+
+  sessionStorage.setItem("adminToken", pw);
+
+  try {
+    await api("/api/admin/check");
+    document.getElementById("loginError").textContent = "";
+    showApp();
+  } catch(e) {
+    sessionStorage.removeItem("adminToken");
+    document.getElementById("loginError").textContent =
+      "Wrong password, or the backend is not running.";
+  }
+}
+
+function showApp() {
+  document.getElementById("loginView").classList.add("hidden");
+  document.getElementById("appView").classList.remove("hidden");
+  document.getElementById("logoutBtn").classList.remove("hidden");
+
+  loadOrders();
+  loadReturns();
+  loadCustomers();
+  loadChats();
+  setupSalesYears();
+
+  if (!pollTimer) {
+    pollTimer = setInterval(() => {
+      if (token()) {
+        loadReturns();
+        loadChats();
+      }
+    }, 5000);
+  }
+}
+
+function logout() {
+  sessionStorage.removeItem("adminToken");
+
+  if (pollTimer) {
+    clearInterval(pollTimer);
+    pollTimer = null;
+  }
+
+  document.getElementById("appView").classList.add("hidden");
+  document.getElementById("logoutBtn").classList.add("hidden");
+  document.getElementById("loginView").classList.remove("hidden");
+}
+
+window.addEventListener("load", async () => {
+  if (token()) {
+    try {
+      await api("/api/admin/check");
+      showApp();
+    } catch(e) {}
+  }
+});
+
+function showTab(name) {
+  const tabs = ["orders","returns","messages","customers","sales"];
+
+  tabs.forEach(t => {
+    document.getElementById(t + "Tab").classList.toggle("hidden", t !== name);
+    document.getElementById("tab-" + t).classList.toggle("active", t === name);
+  });
+
+  if (name === "sales") {
+    loadSalesReport();
+  }
+}
+
+/* ---------------- SALES REPORT ---------------- */
+
+function setupSalesYears() {
+  const select = document.getElementById("salesYear");
+  const currentYear = new Date().getFullYear();
+
+  select.innerHTML = "";
+
+  for (let year = currentYear; year >= currentYear - 5; year--) {
+    const option = document.createElement("option");
+    option.value = year;
+    option.textContent = year;
+    select.appendChild(option);
+  }
+}
+
+async function loadSalesReport() {
+  const year = document.getElementById("salesYear").value;
+  const message = document.getElementById("salesMessage");
+
+  if (!year) return;
+
+  message.textContent = "Loading sales report...";
+  document.getElementById("salesChart").innerHTML = "";
+
+  try {
+    const report = await api(
+      `/api/admin/sales?year=${encodeURIComponent(year)}`
+    );
+
+    renderSalesReport(report);
+  } catch(e) {
+    message.textContent = "Could not load sales report: " + e.message;
+
+    document.getElementById("placedTotal").textContent = "—";
+    document.getElementById("deliveredTotal").textContent = "—";
+    document.getElementById("cancelledTotal").textContent = "—";
+  }
+}
+
+function renderSalesReport(report) {
+  const monthly = report.monthly || [];
+
+  document.getElementById("placedTotal").textContent =
+    Number(report.placedTotal || 0).toLocaleString("en-IN");
+
+  document.getElementById("deliveredTotal").textContent =
+    Number(report.deliveredTotal || 0).toLocaleString("en-IN");
+
+  document.getElementById("cancelledTotal").textContent =
+    Number(report.cancelledTotal || 0).toLocaleString("en-IN");
+
+  const chart = document.getElementById("salesChart");
+
+  const maxValue = Math.max(
+    1,
+    ...monthly.map(m => Math.max(
+      Number(m.placedProducts || 0),
+      Number(m.deliveredProducts || 0),
+      Number(m.cancelledProducts || 0)
+    ))
+  );
+
+  chart.innerHTML = monthly.map(m => {
+    const placed = Number(m.placedProducts || 0);
+    const delivered = Number(m.deliveredProducts || 0);
+    const cancelled = Number(m.cancelledProducts || 0);
+
+    const placedHeight = placed === 0
+      ? 0
+      : Math.max(3, (placed / maxValue) * 100);
+
+    const deliveredHeight = delivered === 0
+      ? 0
+      : Math.max(3, (delivered / maxValue) * 100);
+
+    const cancelledHeight = cancelled === 0
+      ? 0
+      : Math.max(3, (cancelled / maxValue) * 100);
+
+    const monthName = String(m.month || "").slice(0,3);
+
+    return `
+      <div class="monthGroup">
+        <div class="barArea">
+
+          <div style="width:30%;display:flex;flex-direction:column;justify-content:flex-end;height:100%">
+            <div class="barValue">${placed}</div>
+            <div class="bar placed"
+              style="height:${placedHeight}%"
+              title="Placed: ${placed}">
+            </div>
+          </div>
+
+          <div style="width:30%;display:flex;flex-direction:column;justify-content:flex-end;height:100%">
+            <div class="barValue">${delivered}</div>
+            <div class="bar delivered"
+              style="height:${deliveredHeight}%"
+              title="Delivered: ${delivered}">
+            </div>
+          </div>
+
+          <div style="width:30%;display:flex;flex-direction:column;justify-content:flex-end;height:100%">
+            <div class="barValue">${cancelled}</div>
+            <div class="bar cancelled"
+              style="height:${cancelledHeight}%"
+              title="Cancelled: ${cancelled}">
+            </div>
+          </div>
+
+        </div>
+
+        <div class="monthName">${esc(monthName)}</div>
+      </div>
+    `;
+  }).join("");
+
+  if (
+    Number(report.placedTotal || 0) === 0 &&
+    Number(report.deliveredTotal || 0) === 0 &&
+    Number(report.cancelledTotal || 0) === 0
+  ) {
+    document.getElementById("salesMessage").textContent =
+      `No placed, delivered or cancelled products were recorded in ${report.year}.`;
+  } else {
+    document.getElementById("salesMessage").textContent =
+      `Showing actual placed, delivered and cancelled product quantities for ${report.year}. Each status is counted separately.`;
+  }
+}
+
+/* ---------------- ORDERS ---------------- */
+
+async function loadOrders() {
+  try {
+    orders = await api("/api/admin/orders");
+    renderOrders();
+  } catch(e) {
+    document.getElementById("ordersList").innerHTML =
+      `<div class="error">${esc(e.message)}</div>`;
+  }
+}
+
+function filteredOrders() {
+  const status = document.getElementById("statusFilter").value;
+  const month = document.getElementById("monthFilter").value;
+  const q = document.getElementById("searchFilter").value.trim().toLowerCase();
+
+  return orders.filter(o => {
+    if (status && o.status !== status) return false;
+
+    if (month && !(o.orderDate || "").startsWith(month)) return false;
+
+    if (q) {
+      const hay = [
+        o.orderCode,
+        o.customerName,
+        o.customerPhone,
+        o.customerId
+      ].join(" ").toLowerCase();
+
+      if (!hay.includes(q)) return false;
+    }
+
+    return true;
+  });
+}
+
+function clearFilters() {
+  ["statusFilter","monthFilter","searchFilter"].forEach(id => {
+    document.getElementById(id).value = "";
+  });
+  renderOrders();
+}
+
+function renderStats(list) {
+  const count = s => list.filter(o => o.status === s).length;
+
+  const active = count("placed");
+
+  const value = list
+    .filter(o => o.status !== "cancelled")
+    .reduce((sum,o) => sum + Number(o.total || 0), 0);
+
+  const stats = [
+    [list.length,"Orders (current filter)"],
+    [active,"Order Placed"],
+    [count("delivered"),"Delivered"],
+    [count("cancelled"),"Cancelled"],
+    ["₹" + value.toLocaleString("en-IN"),"Order value (excl. cancelled)"]
+  ];
+
+  document.getElementById("stats").innerHTML = stats
+    .map(([n,l]) =>
+      `<div class="stat"><div class="n">${n}</div><div class="l">${l}</div></div>`
+    ).join("");
+}
+
+function renderOrders() {
+  const list = filteredOrders();
+  renderStats(list);
+
+  const box = document.getElementById("ordersList");
+
+  if (orders.length === 0) {
+    box.innerHTML = '<p class="muted">No orders yet.</p>';
+    return;
+  }
+
+  if (list.length === 0) {
+    box.innerHTML = '<p class="muted">No orders match these filters.</p>';
+    return;
+  }
+
+  box.innerHTML = list.map(orderCard).join("");
+}
+
+function orderCard(o) {
+  const status = o.status;
+  const color = STATUS_COLOR[status] || "#2457C5";
+  const bg = STATUS_BG[status] || "#EFF4FF";
+
+  const buttons = (NEXT[status] || []).map(([next,text]) =>
+    `<button class="${next === "cancelled" ? "btn-danger" : "btn-primary"}"
+      onclick="changeStatus(${o.id},'${next}')">${text}</button>`
+  ).join("");
+
+  return `
+    <div class="order" style="border-left-color:${color}">
+      <div class="order-top">
+        <div>
+          <div class="code">
+            ${esc(o.orderCode)}
+            <span class="muted">· Ref #${esc(o.id)}</span>
+          </div>
+          <div class="muted">
+            Placed ${esc(fmtDate(o.placedAt || o.orderDate))}
+          </div>
+        </div>
+
+        <span class="badge" style="background:${bg};color:${color}">
+          ${esc(STATUS_LABEL[status] || status)}
+        </span>
+      </div>
+
+      <div class="grid2">
+        <div>
+          <div class="label">Customer</div>
+          <div>
+            <strong>${esc(o.customerName || "Name not saved yet")}</strong>
+            ${o.customerPhone ? " · " + esc(o.customerPhone) : ""}
+          </div>
+
+          <div class="muted">ID ${esc(o.customerId || "—")}</div>
+
+          <div class="label" style="margin-top:8px">Delivery address</div>
+          <div>${esc(o.address || "—")}</div>
+        </div>
+
+        <div>
+          <div class="label">Items</div>
+          <div>${esc(o.items || "—")}</div>
+
+          <div class="label" style="margin-top:8px">Order total</div>
+          <strong>₹${esc(o.total)}</strong>
+        </div>
+      </div>
+
+      <div class="actions">
+        ${buttons}
+        ${status === "placed" ? `
+          <input id="note-${o.id}"
+            placeholder="Optional note"
+            style="min-width:240px" />
+        ` : ""}
+        <button class="btn-light" onclick="toggleTimeline(${o.id})">
+          View timeline
+        </button>
+      </div>
+
+      <div class="box timeline hidden" id="tl-${o.id}"></div>
+    </div>
+  `;
+}
+
+async function changeStatus(id,status) {
+  const label = STATUS_LABEL[status];
+
+  if (!label) {
+    alert("Invalid order status.");
+    return;
+  }
+
+  if (!confirm(`Change this order to "${label}"?`)) return;
+
+  const noteElement = document.getElementById("note-" + id);
+  const note = noteElement ? noteElement.value.trim() : "";
+
+  try {
+    await api(`/api/admin/orders/${id}/status`, {
+      method:"PUT",
+      body:{status,note}
+    });
+
+    await loadOrders();
+    alert("Order status updated successfully.");
+  } catch(e) {
+    alert(e.message);
+  }
+}
+
+async function toggleTimeline(id) {
+  const box = document.getElementById("tl-" + id);
+
+  if (!box.classList.contains("hidden")) {
+    box.classList.add("hidden");
+    return;
+  }
+
+  box.classList.remove("hidden");
+  box.innerHTML = '<span class="muted">Loading...</span>';
+
+  try {
+    const rows = await api(`/api/admin/orders/${id}/history`);
+
+    box.innerHTML = rows.length
+      ? rows.map(r => `
+          <div>
+            <strong>${esc(STATUS_LABEL[r.status] || r.status)}</strong>
+            · ${esc(fmtDate(r.changedAt))}
+            · by ${r.changedBy === "admin" ? "shop" : "customer"}
+            ${r.note ? `<br><span class="muted">${esc(r.note)}</span>` : ""}
+          </div>
+        `).join("")
+      : '<span class="muted">No entries yet.</span>';
+  } catch(e) {
+    box.innerHTML = `<span class="error">${esc(e.message)}</span>`;
+  }
+}
+
+/* ---------------- RETURNS ---------------- */
+
+async function loadReturns() {
+  try {
+    returns = await api("/api/admin/returns");
+    renderReturns();
+  } catch(e) {
+    document.getElementById("returnsList").innerHTML =
+      `<div class="error">${esc(e.message)}</div>`;
+  }
+}
+
+function renderReturns() {
+  const waiting = returns.filter(r => r.status === "submitted").length;
+
+  const pill = document.getElementById("returnsPill");
+  pill.textContent = waiting;
+  pill.classList.toggle("hidden", waiting === 0);
+
+  const bar = document.getElementById("returnAlert");
+
+  if (waiting > 0) {
+    document.getElementById("returnAlertText").textContent =
+      `🔔 ${waiting} return / exchange request(s) waiting for your approval`;
+    bar.classList.remove("hidden");
+  } else {
+    bar.classList.add("hidden");
+  }
+
+  document.getElementById("returnsCount").textContent =
+    `${returns.length} request(s) · ${waiting} waiting`;
+
+  const box = document.getElementById("returnsList");
+
+  if (returns.length === 0) {
+    box.innerHTML = '<p class="muted">No return or exchange requests yet.</p>';
+    return;
+  }
+
+  box.innerHTML = returns.map(r => {
+    const cfg = RETURN_STATUS[r.status] || RETURN_STATUS.submitted;
+    const canDecide = r.status === "submitted";
+
+    return `
+      <div class="order" style="border-left-color:${cfg.color}">
+        <div class="order-top">
+          <div>
+            <div class="code">
+              ${r.actionType === "exchange" ? "🔄 Exchange" : "📦 Return"}
+              · ${esc(r.orderCode)}
+              <span class="muted">· Request #${esc(r.id)}</span>
+            </div>
+            <div class="muted">
+              Requested ${esc(fmtDate(r.requestedAt || r.requestDate))}
+            </div>
+          </div>
+
+          <span class="badge" style="background:${cfg.bg};color:${cfg.color}">
+            ${cfg.label}
+          </span>
+        </div>
+
+        <div class="retGrid">
+          <div>
+            ${r.hasPhoto
+              ? `<img class="retPhoto" src="${esc(r.photoUrl)}" alt="Product photo" />`
+              : '<span class="muted">No photo</span>'}
+          </div>
+
+          <div>
+            <div class="label">Customer</div>
+            <div>
+              <strong>${esc(r.customerName || "Name not saved")}</strong>
+              ${r.customerPhone ? " · " + esc(r.customerPhone) : ""}
+            </div>
+
+            <div class="muted">ID ${esc(r.customerId || "—")}</div>
+
+            <div class="label" style="margin-top:10px">Reason</div>
+            <div><strong>${esc(r.reason)}</strong></div>
+
+            ${r.details ? `
+              <div class="label" style="margin-top:10px">Customer says</div>
+              <div>${esc(r.details)}</div>
+            ` : ""}
+
+            ${r.status !== "submitted" && r.adminNote ? `
+              <div class="label" style="margin-top:10px">Your note</div>
+              <div>${esc(r.adminNote)}</div>
+            ` : ""}
+
+            ${r.status !== "submitted" ? `
+              <div class="muted" style="margin-top:6px">
+                Decided ${esc(fmtDate(r.decidedAt))}
+              </div>
+            ` : ""}
+          </div>
+        </div>
+
+        ${canDecide ? `
+          <div class="box">
+            <div class="label">Your decision</div>
+            <div class="row">
+              <input id="rnote-${r.id}"
+                placeholder="Note for the customer"
+                style="min-width:280px" />
+              <button class="btn-success"
+                onclick="decideReturn(${r.id},'approved')">Approve</button>
+              <button class="btn-danger"
+                onclick="decideReturn(${r.id},'rejected')">Reject</button>
+            </div>
+          </div>
+        ` : ""}
+      </div>
+    `;
+  }).join("");
+}
+
+async function decideReturn(id,decision) {
+  if (!confirm((decision === "approved" ? "Approve" : "Reject") + " this request?")) return;
+
+  const note = document.getElementById("rnote-" + id).value.trim();
+
+  try {
+    await api(`/api/admin/returns/${id}/decision`, {
+      method:"PUT",
+      body:{decision,note}
+    });
+
+    await loadReturns();
+  } catch(e) {
+    alert(e.message);
+  }
+}
+
+/* ---------------- MESSAGES ---------------- */
+
+async function loadChats() {
+  try {
+    chats = await api("/api/admin/chat/customers");
+    renderChats();
+  } catch(e) {
+    document.getElementById("convList").innerHTML =
+      `<div class="error">${esc(e.message)}</div>`;
+  }
+}
+
+function renderChats() {
+  const unread = chats.reduce((s,c) => s + Number(c.unread || 0), 0);
+
+  const pill = document.getElementById("chatPill");
+  pill.textContent = unread;
+  pill.classList.toggle("hidden", unread === 0);
+
+  const bar = document.getElementById("chatAlert");
+
+  if (unread > 0) {
+    document.getElementById("chatAlertText").textContent =
+      `💬 ${unread} unread customer message(s)`;
+    bar.classList.remove("hidden");
+  } else {
+    bar.classList.add("hidden");
+  }
+
+  const box = document.getElementById("convList");
+
+  if (chats.length === 0) {
+    box.innerHTML = '<p class="muted">No messages yet.</p>';
+    return;
+  }
+
+  box.innerHTML = chats.map(c => `
+    <div class="conv ${openChatId === c.customerId ? "active" : ""}"
+      onclick="openChat('${esc(c.customerId)}')">
+      <strong>${esc(c.customerName || c.customerId)}</strong>
+      ${c.unread > 0 ? `<span class="pill">${c.unread}</span>` : ""}
+      <br>
+      <span class="muted">${esc((c.lastMessage || "").slice(0,40))}</span>
+      <br>
+      <span class="muted">${esc(fmtDate(c.lastAt))}</span>
+    </div>
+  `).join("");
+}
+
+async function openChat(cid) {
+  openChatId = cid;
+  renderChats();
+
+  const box = document.getElementById("chatBox");
+  box.innerHTML = '<span class="muted">Loading...</span>';
+
+  try {
+    const msgs = await api(`/api/admin/chat/${encodeURIComponent(cid)}`);
+
+    document.getElementById("replyRow").classList.remove("hidden");
+
+    box.innerHTML = msgs.length
+      ? msgs.map(m => {
+          const cls = m.sender === "admin"
+            ? "me"
+            : (m.sender === "bot" ? "bot" : "them");
+
+          const who = m.sender === "admin"
+            ? "You"
+            : (m.sender === "bot" ? "Auto-reply" : "Customer");
+
+          return `
+            <div class="bubble ${cls}">
+              <div style="font-size:11px;opacity:.7">
+                ${who} · ${esc(fmtDate(m.createdAt))}
+              </div>
+              ${esc(m.text)}
+            </div>
+          `;
+        }).join("")
+      : '<span class="muted">No messages.</span>';
+
+    box.scrollTop = box.scrollHeight;
+    await loadChats();
+  } catch(e) {
+    box.innerHTML = `<span class="error">${esc(e.message)}</span>`;
+  }
+}
+
+async function sendReply() {
+  const input = document.getElementById("replyInput");
+  const text = input.value.trim();
+
+  if (!text || !openChatId) return;
+
+  try {
+    await api(`/api/admin/chat/${encodeURIComponent(openChatId)}/reply`, {
+      method:"POST",
+      body:{text}
+    });
+
+    input.value = "";
+    await openChat(openChatId);
+  } catch(e) {
+    alert(e.message);
+  }
+}
+
+/* ---------------- CUSTOMERS ---------------- */
+
+async function loadCustomers() {
+  try {
+    customers = await api("/api/admin/customers");
+    renderCustomers();
+  } catch(e) {
+    document.getElementById("customersList").innerHTML =
+      `<div class="error">${esc(e.message)}</div>`;
+  }
+}
+
+function renderCustomers() {
+  const box = document.getElementById("customersList");
+
+  if (customers.length === 0) {
+    box.innerHTML = '<p class="muted">No customers yet.</p>';
+    return;
+  }
+
+  box.innerHTML = `
+    <table>
+      <thead>
+        <tr><th>ID</th><th>Name</th><th>Address</th><th></th></tr>
+      </thead>
+      <tbody>
+        ${customers.map(c => `
+          <tr>
+            <td>${esc(c.customerCode)}</td>
+            <td>
+              ${esc(c.name || "—")}<br>
+              <span class="muted">${esc(c.phone || "")}</span>
+            </td>
+            <td>
+              ${c.addressSavedByAdmin
+                ? '<span style="color:#12B76A;font-weight:700">Saved</span>'
+                : '<span style="color:#F79009;font-weight:700">Missing</span>'}
+            </td>
+            <td>
+              <button class="btn-light"
+                onclick="editCustomer('${esc(c.customerCode)}')">Edit</button>
+            </td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+  `;
+}
+
+function editCustomer(code) {
+  const c = customers.find(x => x.customerCode === code);
+  if (!c) return;
+
+  editingCode = code;
+
+  document.getElementById("editTitle").textContent = "Edit " + code;
+  document.getElementById("custForm").classList.remove("hidden");
+  document.getElementById("custError").textContent = "";
+
+  setVal("c_code",c.customerCode);
+  setVal("c_name",c.name);
+  setVal("c_phone",c.phone);
+  setVal("c_line",c.addressLine);
+  setVal("c_city",c.city);
+  setVal("c_state",c.state);
+  setVal("c_pin",c.pincode);
+}
+
+async function saveCustomer() {
+  if (!editingCode) return;
+
+  const body = {
+    name:val("c_name"),
+    phone:val("c_phone"),
+    addressLine:val("c_line"),
+    city:val("c_city"),
+    state:val("c_state"),
+    pincode:val("c_pin")
+  };
+
+  try {
+    await api(`/api/admin/customers/${encodeURIComponent(editingCode)}/profile`, {
+      method:"PUT",
+      body
+    });
+
+    alert("Customer saved.");
+    await loadCustomers();
+    editCustomer(editingCode);
+  } catch(e) {
+    document.getElementById("custError").textContent = e.message;
+  }
+}
+</script>
+
+</body>
+</html>
