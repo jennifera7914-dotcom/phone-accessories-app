@@ -24,7 +24,7 @@ import { getImageUrl } from '../constants/api';
 
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
 
-export default function ProductDetailScreen({ route, navigation }) {
+export default function ProductDetailScreen({ route, navigation, addToCartToShop }) {
   const { productId } = route.params;
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -87,7 +87,7 @@ export default function ProductDetailScreen({ route, navigation }) {
     .filter(Boolean)
     .map((img) => getImageUrl(img));
 
-  const stockQty = Number(product.stockQty ?? 0);
+  const stockQty = Number(product.stock ?? product.stockQty ?? 0);
   const isOutOfStock = stockQty <= 0;
 
   // Quick select buttons (10, 15, 20...)
@@ -144,7 +144,11 @@ export default function ProductDetailScreen({ route, navigation }) {
 
     try {
       setCartLoading(true);
-      await cartService.addToCart(product, numQty);
+      if (addToCartToShop) {
+        await addToCartToShop(product, numQty);
+      } else {
+        await cartService.addToCart(product, numQty);
+      }
       setCartLoading(false);
       Alert.alert('Success', `Added ${numQty} units to cart!`, [
         { text: 'Continue Shopping', onPress: () => navigation.goBack() },

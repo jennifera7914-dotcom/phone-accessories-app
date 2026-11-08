@@ -1,4 +1,4 @@
-
+﻿
 import React, {
   createContext,
   useCallback,
@@ -217,32 +217,33 @@ export function ShopProvider({ children }) {
 
   // ---------- ADD TO CART ----------
 
-  const addToCart = (product) => {
+  const addToCart = (product, quantity = 1) => {
     const existing = cart.find(
       (i) => i.productId === product.id
     );
 
     const cap = product.stock != null
-      ? product.stock
+      ? Number(product.stock)
       : 999;
+
+    const requestedQuantity = Math.max(1, Number(quantity) || 1);
 
     const next = existing
       ? cart.map((i) =>
           i.productId === product.id
             ? {
                 ...i,
-                quantity: Math.min(
-                  i.quantity + 1,
-                  cap
-                ),
+                quantity: Math.min(i.quantity + requestedQuantity, cap),
               }
             : i
         )
-      : [...cart, buildCartItem(product, 1)];
+      : [
+          ...cart,
+          buildCartItem(product, Math.min(requestedQuantity, cap)),
+        ];
 
-    saveCart(next, savedForLater);
+    return saveCart(next, savedForLater);
   };
-
   // ---------- REORDER ----------
 
   const addItemsToCart = async (orderItems) => {
@@ -584,3 +585,5 @@ export function useShop() {
 
   return context;
 }
+
+
