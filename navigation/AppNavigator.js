@@ -2,14 +2,24 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { COLORS } from "../constants/colors";
 
-// Member 2 + Member 3 screens (existing)
+// ===== Member 1 Screens (Auth) =====
+import AdminDashboardScreen from "../screens/AdminDashboardScreen";
+import AdminLoginScreen from "../screens/AdminLoginScreen";
+import ChooseRoleScreen from "../screens/ChooseRoleScreen";
+import LoginScreen from "../screens/LoginScreen";
+import OnboardingScreen from "../screens/OnboardingScreen";
+import ProfileScreen from "../screens/ProfileScreen";
+import SplashScreen from "../screens/SplashScreen";
+
+// ===== Member 2 Screens (Products) =====
 import AddProduct from "../screens/AddProduct";
 import AdminProducts from "../screens/AdminProducts";
 import HomeScreen from "../screens/HomeScreen";
 import ProductDetailScreen from "../screens/ProductDetailScreen";
 import ProductsScreen from "../screens/ProductsScreen";
 import SearchScreen from "../screens/SearchScreen";
-import { ShopProvider } from "../src/context/ShopContext";
+
+// ===== Member 3 Screens (Orders, Payment, Chat) =====
 import CartScreen from "../src/screens/CartScreen";
 import ChatScreen from "../src/screens/ChatScreen";
 import CheckoutScreen from "../src/screens/CheckoutScreen";
@@ -19,14 +29,8 @@ import OrderDetailScreen from "../src/screens/OrderDetailScreen";
 import OrderHistoryScreen from "../src/screens/OrderHistoryScreen";
 import ReturnScreen from "../src/screens/ReturnScreen";
 
-// Member 1 screens (new)
-import AdminDashboardScreen from "../screens/AdminDashboardScreen";
-import AdminLoginScreen from "../screens/AdminLoginScreen";
-import ChooseRoleScreen from "../screens/ChooseRoleScreen";
-import LoginScreen from "../screens/LoginScreen";
-import OnboardingScreen from "../screens/OnboardingScreen";
-import ProfileScreen from "../screens/ProfileScreen";
-import SplashScreen from "../screens/SplashScreen";
+// ===== Context =====
+import { ShopProvider } from "../src/context/ShopContext";
 
 const Stack = createNativeStackNavigator();
 
@@ -42,7 +46,7 @@ export default function AppNavigator() {
             headerTitleStyle: { fontWeight: "bold" },
           }}
         >
-          {/* Member 1 screens - Auth Flow */}
+          {/* ===== MEMBER 1: Auth Flow ===== */}
           <Stack.Screen
             name="SplashScreen"
             component={SplashScreen}
@@ -79,28 +83,16 @@ export default function AppNavigator() {
             options={{ headerShown: false }}
           />
 
-          {/* Member 1 - alias so navigation.replace('HomeScreen') also works */}
-          <Stack.Screen
-            name="HomeScreen"
-            component={HomeScreen}
-            options={{ title: "🏠 Home" }}
-          />
-
-          {/* Member 2 + Member 3 screens - keep original names */}
+          {/* ===== MEMBER 2: Products ===== */}
           <Stack.Screen
             name="Home"
             component={HomeScreen}
             options={{ title: "🏠 Home" }}
           />
           <Stack.Screen
-            name="AdminProducts"
-            component={AdminProducts}
-            options={{ title: "Admin · Products" }}
-          />
-          <Stack.Screen
-            name="AddProduct"
-            component={AddProduct}
-            options={{ title: "Add / Edit Product" }}
+            name="HomeScreen"
+            component={HomeScreen}
+            options={{ title: "🏠 Home" }}
           />
           <Stack.Screen
             name="Search"
@@ -119,6 +111,18 @@ export default function AppNavigator() {
             component={ProductDetailScreen}
             options={{ title: "📄 Product" }}
           />
+          <Stack.Screen
+            name="AdminProducts"
+            component={AdminProducts}
+            options={{ title: "Admin · Products" }}
+          />
+          <Stack.Screen
+            name="AddProduct"
+            component={AddProduct}
+            options={{ title: "Add / Edit Product" }}
+          />
+
+          {/* ===== MEMBER 3: Orders, Payment, Chat ===== */}
           <Stack.Screen
             name="Cart"
             component={CartScreen}
